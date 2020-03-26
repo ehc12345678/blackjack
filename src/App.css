@@ -38,6 +38,11 @@
   }
 }
 
+.gameNextTurn {
+  text-align: center;
+}
+
+
 .player {
   border-style: solid;
   padding-top: 10px;
@@ -52,14 +57,17 @@
   font-weight: bold;
 }
 
-.playerChips {
-    display: inline;
-    margin-left: 10px;
+.playerChips, .playerCash, .playerBetForm {
+  display: inline;
+  margin-left: 10px;
 }
 
-.playerCash {
-    display: inline;
-    margin-left: 10px;
+.playerBetForm input {
+  width: 3em;
+}
+
+.playerBet {
+  margin-left: 10px;
 }
 
 .hands {
@@ -74,6 +82,11 @@
 
 .handTotal {
     text-align: center;
+}
+
+.handTotalActive {
+  text-align: center;
+  background-color: blue;
 }
 
 .handButtons {
@@ -94,7 +107,7 @@ button.handButtonActive {
     margin-top: 10px;
 }
 
-button.handButtonNotActive {
+button.handButton {
     margin-top: 10px;
     visibility: hidden;
 }

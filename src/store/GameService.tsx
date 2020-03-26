@@ -33,7 +33,7 @@ export class GameService {
         if (currentGame.players.length === 0) {
             return state;
         }
-        return this.getHandService().startTurn(state);
+        return state;
     }
 
     getHandService() : HandService {
@@ -43,5 +43,11 @@ export class GameService {
     getHandsForPlayer(state: State, player: Player) : Array<Hand> {
         var hands = state.playersHands.filter(h => h.player().id() === player.id());
         return hands;
+    }
+
+    changeBet(state: State, player: Player, bet: number) {
+        var { currentGame } = state;
+        currentGame = currentGame.modifyPlayer(player.setCurrentBet(bet));
+        return { ...state, currentGame };
     }
 }

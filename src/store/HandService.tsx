@@ -24,7 +24,7 @@ export class HandService {
             playersHands.push(hand);
         }
         dealersHand = dealersHand.addCard(this.cardService.nextCard());
-        return { ...state, currentGame, playersHands, dealersHand, activeHand: 0, turnIsGoing: true };
+        return this.setActiveHand({ ...state, currentGame, playersHands, dealersHand, turnIsGoing: true }, 0);
     }
 
     getActiveHand(state: State) : Hand {
@@ -47,9 +47,18 @@ export class HandService {
     }
 
     nextActiveHand(state: State) : State {
-        var newState = {...state, activeHand: state.activeHand + 1};
+        return this.setActiveHand(state, state.activeHand + 1);
+    }
+
+    setActiveHand(state: State, activeHand: number) {
+        var newState = {...state, activeHand};
         if (!this.anotherHandExists(newState)) {
             newState = this.giveDealerControl(newState);
+        } else {
+            var hand = this.getActiveHand(newState);
+            if (hand.isDone()) {
+                newState = this.nextActiveHand(newState);
+            }
         }
         return newState;
     }

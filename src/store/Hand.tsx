@@ -89,6 +89,6 @@ export class Hand {
     }
 
     isDone() : boolean {
-        return this.isBusted() || this.isBlackjack();
+        return this.isBusted() || this.isStaying() || this.isBlackjack();
     }
 }

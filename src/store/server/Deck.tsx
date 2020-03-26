@@ -29,13 +29,20 @@ export class Deck {
 
     shuffle() {
         const SHUFFLE_FACTOR = 1000;
-        for (let i = 0; i < SHUFFLE_FACTOR; ++i) {
-            const first = getRandomInt(this.cards.length);
-            const second = getRandomInt(this.cards.length);
-            
-            const temp = this.cards[first];
-            this.cards[second] = this.cards[first];
-            this.cards[first] = temp;
+        for (let i = 0; i < this.cards.length; ++i) {
+            this.swap(this.cards, i, getRandomInt(this.cards.length));
         }
+        for (let i = this.cards.length - 1; i >= 0; --i) {
+            this.swap(this.cards, i, getRandomInt(this.cards.length));
+        }
+        for (let i = 0; i < SHUFFLE_FACTOR; ++i) {
+            this.swap(this.cards, getRandomInt(this.cards.length), getRandomInt(this.cards.length));
+        }
+    }
+
+    swap<T>(arr: Array<T>, item1: number, item2: number) {
+        const tmp = arr[item1];
+        arr[item1] = arr[item2];
+        arr[item2] = tmp;
     }
 }

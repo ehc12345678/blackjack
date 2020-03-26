@@ -6,6 +6,7 @@ import { PlayerComponent } from './views/Components/PlayerComponent';
 import { HandComponent } from './views/Components/HandComponent';
 import './App.css';
 import { Hand } from './store/Hand';
+import { Player } from './store/Player';
 
 type BlackjackProps = {
 
@@ -100,8 +101,12 @@ export class Blackjack extends Component<BlackjackProps, State> {
 
    getNextTurnButton() { 
        if (!this.state.turnIsGoing) {
-          return <button onClick={() => this.handleNextTurn()}>Next Turn</button>; 
+          return <div className="gameNextTurn"><button onClick={() => this.handleNextTurn()}>Next Turn</button></div>; 
        }
+   }
+
+   onChangeBet(player: Player, bet: number) {
+       this.setState(this.gameService.changeBet(this.state, player, bet));
    }
 
    render() {
@@ -110,10 +115,6 @@ export class Blackjack extends Component<BlackjackProps, State> {
             <div>
                 <button onClick={() => this.handleLogin()}>Login</button>
                 <button onClick={() => this.handleRegister()}>Register</button>              
-            </div>
-            <div>
-                <button onClick={() => this.handleStartGame()}>Start Game</button>              
-                {this.getNextTurnButton()}             
             </div>
             <div>
                 Current: {this.state.currentUser?.name}
@@ -127,18 +128,34 @@ export class Blackjack extends Component<BlackjackProps, State> {
                                 <PlayerComponent player={value} 
                                     hands={this.gameService.getHandsForPlayer(this.state, value)} 
                                     activeHand={this.getActiveHand(this.state)} 
+                                    canChangeBet={!this.state.turnIsGoing}
                                     onHit={() => this.onHit()} 
-                                    onStay={() => this.onStay()}/>
+                                    onStay={() => this.onStay()}
+                                    onChangeBet={(player, bet) => this.onChangeBet(player, bet)}/>
                             </td>
                         })}
                     </tr>
                     <tr>
-                        <td>Dealer</td>
-                        <td>
-                            <HandComponent hand={this.state.dealersHand} 
-                                isActive={this.getActiveHand(this.state) === this.state.dealersHand}
-                                onHit={() => this.onHit()} 
-                                onStay={() => this.onStay()}/>
+                        <td colSpan={this.state.currentGame.players.length} align="center">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {this.getNextTurnButton()}             
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <HandComponent hand={this.state.dealersHand} 
+                                            isActive={this.state.turnIsGoing && this.getActiveHand(this.state) === this.state.dealersHand}
+                                            onHit={() => this.onHit()} 
+                                            onStay={() => this.onStay()}
+                                            isDealer={true}/>             
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
                         </td>
                     </tr>
                 </table>

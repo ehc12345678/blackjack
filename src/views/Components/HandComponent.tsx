@@ -6,6 +6,7 @@ import { Result } from "../../store/HandService";
 type HandProperties = {
     hand: Hand,                                                                                                                                                                                                                                                                                                                                                                                             
     isActive: boolean,
+    isDealer: boolean,
     onHit: Function,
     onStay: Function
 };
@@ -19,10 +20,14 @@ export class HandComponent extends Component<HandProperties> {
         if (hand.isBusted()) {
             return <span className="busted">Busted</span>;
         }
-        if (hand.isStaying() || hand.highestTotal() === hand.lowestTotal()) {
+        const lowest = hand.lowestTotal();
+        const highest = hand.highestTotal();
+        if (lowest > 0 && (hand.isStaying() || lowest === highest)) {
             return <b>{hand.bestTotal()}</b>;
         }
-        return <span><b>{this.props.hand.lowestTotal()}</b> or <b>{this.props.hand.highestTotal()}</b></span>
+        if (lowest > 0) {
+            return <span><b>{lowest}</b> or <b>{highest}</b></span>
+        }
     }
 
     canHit() : boolean {
@@ -45,21 +50,27 @@ export class HandComponent extends Component<HandProperties> {
         }
     }
 
+    buttonsShouldBeVisible() : boolean {
+        return !this.props.isDealer && this.props.isActive && this.props.hand.result() === Result.PLAYING;
+    }
+
     render() {
+        var active = this.props.isActive ? "Active" : "";
+        var btnActive = this.buttonsShouldBeVisible() ? "Active" : "";
         return (
-            <div className={this.props.isActive ? "handActive" : "hand"}>
-                <div className="handTotal">{this.getHandTotal()}</div>
+            <div className={"hand" + active}>
+                <div className={"handTotal" + active}>{this.getHandTotal()}</div>
                 {this.getBet()}
                 {this.props.hand.cards().map((card) => {
                     return <CardComponent card={card}/>
                 })}
                 <div className="handButtons">
                     <button 
-                        className={this.props.isActive && this.props.hand.result() === Result.PLAYING ? "handButtonActive" : "handButtonNotActive"} 
+                        className={"handButton" + btnActive} 
                         disabled={!this.canHit()}
                         onClick={() => this.props.onHit()}>Hit</button>
                     <button 
-                        className={this.props.isActive && this.props.hand.result() === Result.PLAYING ? "handButtonActive" : "handButtonNotActive"} 
+                        className={"handButton" + btnActive} 
                         disabled={!this.canStay()}
                         onClick={() => this.props.onStay()}>Stay</button>
                 </div> 

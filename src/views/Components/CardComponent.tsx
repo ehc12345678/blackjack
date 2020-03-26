@@ -6,10 +6,6 @@ type CardProperties = {
 };
 
 export class CardComponent extends Component<CardProperties> {
-    constructor(props: CardProperties) {
-        super(props);
-    }
-
     private cardValueToStr(value: number) : string {
         switch (value) {
             case 1: return 'A';
