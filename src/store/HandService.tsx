@@ -129,9 +129,11 @@ export class HandService {
             return Result.LOSS;
         } else if (dealersHand.isBlackjack()) {
             return hand.isBlackjack() ? Result.PUSH : Result.LOSS;
+        } else if (hand.isBlackjack()) {
+            return Result.BLACKJACK;
         } else if (dealersHand.isBusted()) {
             return Result.WIN;
-        }
+        } 
         const dealerTotal = dealersHand.bestTotal();
         const handTotal = hand.bestTotal();
         if (dealerTotal && dealerTotal > handTotal) {
