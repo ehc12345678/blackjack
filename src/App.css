@@ -1,0 +1,123 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-float infinite 3s ease-in-out;
+  }
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.App-link {
+  color: rgb(112, 76, 182);
+}
+
+@keyframes App-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px)
+  }
+  100% {
+    transform: translateY(0px)
+  }
+}
+
+.player {
+  border-style: solid;
+  padding-top: 10px;
+  margin: 20px;
+  vertical-align: middle;
+}
+
+.playerName {
+  text-align: center;
+  font-size: medium;
+  background-color: aqua;
+  font-weight: bold;
+}
+
+.playerChips {
+    display: inline;
+    margin-left: 10px;
+}
+
+.playerCash {
+    display: inline;
+    margin-left: 10px;
+}
+
+.hands {
+  border-style: dotted;
+  display: block;
+}
+
+.hand {
+  display: inline-block;
+  margin: 10px;
+}
+
+.handTotal {
+    text-align: center;
+}
+
+.handButtons {
+    height: 30px;
+    text-align: center;
+}
+
+.handBet {
+    text-align: left;
+    margin-left: 20px;
+}
+
+.handResult {
+    text-align: center;
+}
+
+button.handButtonActive {
+    margin-top: 10px;
+}
+
+button.handButtonNotActive {
+    margin-top: 10px;
+    visibility: hidden;
+}
+
+.card {
+  display: inline-block;
+  vertical-align: bottom;
+  border-style: groove;
+}
+
+.blackjack {
+  font-weight: bold;
+  font-size: 12pt;
+  color: green;  
+}
+
+.busted {
+  font-weight: bold;
+  font-size: 12pt;
+  color: red;  
+}
+
+img {
+  width: 100px;
+  height: 200px;
+}

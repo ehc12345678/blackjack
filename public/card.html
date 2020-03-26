@@ -1,0 +1,113 @@
+<style>
+    
+.player {
+  border-style: solid;
+  padding-top: 10px;
+  margin: 20px;
+  vertical-align: middle;
+}
+
+.playerName {
+  text-align: center;
+  font-size: medium;
+  background-color: aqua;
+  font-weight: bold;
+}
+
+.playerChips {
+    display: inline;
+    margin-left: 10px;
+}
+
+.playerCash {
+    display: inline;
+    margin-left: 10px;
+}
+
+.hands {
+  border-style: dotted;
+  display: block;
+}
+
+.hand {
+  display: inline-block;
+  margin: 10px;
+}
+
+.handTotal {
+    text-align: center;
+}
+
+.handButtons {
+    height: 30px;
+    text-align: center;
+}
+
+button.handButtonActive {
+    margin-top: 10px;
+    height: 25px;
+}
+
+button.handButtonNotActive {
+    margin-top: 10px;
+    height: 25px;
+    visibility: hidden;
+}
+
+.card {
+  display: inline-block;
+  vertical-align: bottom;
+  border-style: groove;
+}
+
+img {
+  width: 100px;
+  height: 200px;
+}
+</style>
+
+<html>
+    <body>
+        <div>Stuff</div>
+        <div class="player">    
+            <div class="playerName">Erik</div>
+            <div class="playerChips">Chips: 100</div>
+            <div class="playerCash">Cash: $100</div>
+            <div class="hands">
+                <div class="hand">
+                    <div class="handTotal"><b>16</b></div>
+                    <div class="card">
+                        <img src="cards/AC.jpg"></img>
+                    </div>    
+                    <div class="card">
+                        <img src="cards/5C.jpg"></img>
+                    </div>    
+                    <div class="card">
+                        <img src="cards/QD.jpg"></img>
+                    </div>
+                    <div class="handButtons">
+                        <button class="handButtonActive">Hit</button>
+                        <button class="handButtonActive">Stay</button>
+                    </div>    
+                </div>
+
+                <div class="hand">
+                    <div class="handTotal">9</div>
+                    <div class="card">
+                        <img src="cards/2C.jpg"></img>
+                    </div>    
+                    <div class="card">
+                        <img src="cards/2D.jpg"></img>
+                    </div>    
+                    <div class="card">
+                        <img src="cards/5S.jpg"></img>
+                    </div>    
+                    <div class="handButtons">
+                        <button class="handButtonNotActive">Hit</button>
+                        <button class="handButtonNotActive"></buttonclass>>Stay</button>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
