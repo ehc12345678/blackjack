@@ -7,8 +7,9 @@ type HandProperties = {
     hand: Hand,                                                                                                                                                                                                                                                                                                                                                                                             
     isActive: boolean,
     isDealer: boolean,
-    onHit: Function,
-    onStay: Function
+    onHit: () => void,
+    onStay: () => void,
+    onSplit: () => void
 };
 
 export class HandComponent extends Component<HandProperties> {
@@ -54,6 +55,12 @@ export class HandComponent extends Component<HandProperties> {
         return !this.props.isDealer && this.props.isActive && this.props.hand.result() === Result.PLAYING;
     }
 
+    getSplitButton() {
+        if (this.props.hand.canSplit() && this.buttonsShouldBeVisible()) {
+            return <button onClick={() => this.props.onSplit()}>Split</button>
+        }
+    }
+
     render() {
         var active = this.props.isActive ? "Active" : "";
         var btnActive = this.buttonsShouldBeVisible() ? "Active" : "";
@@ -73,6 +80,7 @@ export class HandComponent extends Component<HandProperties> {
                         className={"handButton" + btnActive} 
                         disabled={!this.canStay()}
                         onClick={() => this.props.onStay()}>Stay</button>
+                    { this.getSplitButton() }    
                 </div> 
                 {this.getHandResult()}
             </div>

@@ -80,6 +80,26 @@ export class HandService {
         return { ...state, dealersHand };
     }
 
+    splitActiveHand(state: State) {
+        var newState = state;
+        var hand = this.getActiveHand(state);
+        if (hand.canSplit()) {
+            var hand1 = 
+                Hand.create(hand.player(), hand.bet()).
+                    addCard(hand.cards()[0]).
+                    addCard(this.cardService.nextCard());
+            var hand2 = 
+                Hand.create(hand.player(), hand.bet()).
+                    addCard(hand.cards()[1]).
+                    addCard(this.cardService.nextCard());
+            
+            var playersHands = newState.playersHands.slice();
+            playersHands.splice(newState.activeHand, 1, hand1, hand2);
+            newState = this.setActiveHand({...newState, playersHands}, newState.activeHand);
+        }
+        return newState;
+    }
+
     endTurn(state: State) : State {
         var { currentGame } = state;
         var playersHands = [];

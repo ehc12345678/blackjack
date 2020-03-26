@@ -109,6 +109,10 @@ export class Blackjack extends Component<BlackjackProps, State> {
        this.setState(this.gameService.changeBet(this.state, player, bet));
    }
 
+   onSplit() {
+       this.setState(this.gameService.handService.splitActiveHand(this.state));
+   }
+
    render() {
        return (
           <div>
@@ -131,7 +135,9 @@ export class Blackjack extends Component<BlackjackProps, State> {
                                     canChangeBet={!this.state.turnIsGoing}
                                     onHit={() => this.onHit()} 
                                     onStay={() => this.onStay()}
-                                    onChangeBet={(player, bet) => this.onChangeBet(player, bet)}/>
+                                    onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
+                                    onSplit={() => this.onSplit()}
+                                    />
                             </td>
                         })}
                     </tr>
@@ -150,6 +156,7 @@ export class Blackjack extends Component<BlackjackProps, State> {
                                             isActive={this.state.turnIsGoing && this.getActiveHand(this.state) === this.state.dealersHand}
                                             onHit={() => this.onHit()} 
                                             onStay={() => this.onStay()}
+                                            onSplit={() => this.onSplit()}
                                             isDealer={true}/>             
                                         </td>
                                     </tr>

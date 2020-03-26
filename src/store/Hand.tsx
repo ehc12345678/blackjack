@@ -53,6 +53,11 @@ export class Hand {
         return this.data.cards;
     }
 
+    canSplit(): boolean {
+        const { cards } = this.data;
+        return (cards.length === 2 && cards[0].value == cards[1].value);
+    }
+
     highestTotal() : number {
         var total = 0;
         for (let card of this.data.cards) {

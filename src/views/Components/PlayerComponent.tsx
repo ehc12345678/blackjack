@@ -10,6 +10,7 @@ export type PlayerProperties = {
    canChangeBet: boolean,
    onHit: () => void,
    onStay: () => void,
+   onSplit: () => void,
    onChangeBet: (player: Player, bet: number) => void
 };
 
@@ -74,7 +75,7 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
             <div className="hands">
                 {this.props.hands.map((value) => {
                     return <HandComponent hand={value} isActive={this.props.activeHand === value}
-                        onHit={this.props.onHit} onStay={this.props.onStay} isDealer={false}/>
+                        onHit={this.props.onHit} onStay={this.props.onStay} onSplit={this.props.onSplit} isDealer={false}/>
                 })}
             </div>    
         </div>
