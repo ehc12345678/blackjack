@@ -17,16 +17,15 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
-    "outDir": "./dist",
-    "jsx": "react"  
+    "outDir": "./dist"
   },
   "include": [
-      "src",
-      "../client/src/state"
+      "src/**/*.ts",
+      "../client/src/state/*.ts"
   ],
   "exclude": [
+      "src/public",	
       "node_modules"
   ]
 }

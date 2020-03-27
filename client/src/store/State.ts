@@ -8,6 +8,5 @@ export type State = {
     readonly dealersHand: Hand;
     readonly activeHand: number;
     readonly activeUsers: Map<String, User>;
-    readonly currentUser: User | null;
     readonly turnIsGoing: boolean;
 }

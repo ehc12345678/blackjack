@@ -1,170 +1,186 @@
-import React, {Component} from 'react'; 
+import React, { Component } from 'react';
 import { PlayerComponent } from './views/Components/PlayerComponent';
 import { HandComponent } from './views/Components/HandComponent';
 import './App.css';
-import { Hand } from './store/Hand';
+import { Hand, HandHelper } from './store/Hand';
 import { Player } from './store/Player';
+import { State } from './store/State';
+import axios from 'axios';
+import { User } from './store/User';
 
 type BlackjackProps = {
 
 };
 
-export class Blackjack extends Component<BlackjackProps, State> {
-   userService: UserService;
-   gameService: GameService;
-   
-   constructor(props: BlackjackProps) {
-       super(props);
-       this.userService = new UserService();
-       this.gameService = new GameService();
-       this.state = defaultState;
-   }
+export type BlackjackState = {
+    state: State,
+    currentUser: User | undefined
+};
 
-   handleLogin() {
-       const index = this.state.activeUsers.size;
-       var state = (this.userService.signUp(this.state, 'Login ' + index, 'login' + index));
-       state = this.userService.login(state, 'user' + index);
-       if (state.currentUser !== null) {
-            state = this.gameService.addPlayer(state, this.userService.playerFromUser(state.currentUser));
-       }
-       this.setState(state);
-   }
+const helper = new HandHelper();
+export class Blackjack extends Component<BlackjackProps, BlackjackState> {
+    constructor(props: BlackjackProps) {
+        super(props);
+        this.state = { state: {} } as BlackjackState;
+    }
 
-   handleRegister() {
-      const index = this.state.activeUsers.size;
-      var state = (this.userService.signUp(this.state, 'Register ' + index, 'register' + index));
-      if (state.currentUser !== null) {
-        state = this.gameService.addPlayer(state, this.userService.playerFromUser(state.currentUser));
-      }
-      this.setState(state);
-   }
+    async componentDidMount() {
+        const state = await axios.get("/blackjackApi/state") as State;
+        this.setState({ ...this.state, state });
+    }
 
-   handleCreateGame() {
-      this.setState(this.gameService.createGame(this.state));
-   }
+    async handleLogin() {
+        const index = this.state.state.activeUsers.size;
+        const loginId = 'Login' + index;
+        this.doLogin(loginId);
+    }
 
-   handleStartGame() {
-       this.setState(this.gameService.startGame(this.state));
-   }
+    async handleRegister() {
+        const index = this.state.state.activeUsers.size;
+        const loginId = await axios.post("/blackjackApi/register", { name: 'Register' + index }) as string;
+        this.doLogin(loginId);
+    }
 
-   getActiveHand(state: State) : Hand {
-       if (state.activeHand < state.playersHands.length) {
-           return state.playersHands[state.activeHand];
-       }
-       return state.dealersHand;
-   }
+    async doLogin(loginId: string) {
+        const state = await axios.post("/blackjackApi/login", { loginId }) as State;
+        this.setState({ ...this.state, state, currentUser: state.activeUsers.get(loginId) });
+    }
 
-   onHit() {
-       var state = this.gameService.handService.hitActiveHand(this.state);
-       this.setState(state);
-       if (this.isDealerInControl(state)) {
-           this.fireDealerTakesControl(state);
-       }
-   }
+    async handleCreateGame() {
+        const state = await axios.put("/blackjackApi/game") as State;
+        this.setState({ ... this.state, state });
+    }
 
-   onStay() {
-       var state = this.gameService.handService.stayActiveHand(this.state); 
-       this.setState(state);
-       if (this.isDealerInControl(state)) {
-           this.fireDealerTakesControl(state);
-       }
-   }
+    async handleStartGame() {
+        const state = await axios.get("/blackjackApi/game/start") as State;
+        this.setState({ ... this.state, state });
+    }
 
-   onDealerInControl(state: State) {
-       if (this.state.dealersHand.shouldHit()) {
-          state = this.gameService.handService.dealerTakesCard(this.state);
-          this.fireDealerTakesControl(state);
-       } else {
-          state = this.gameService.handService.endTurn(this.state);
-       }
-       this.setState(state);
-   }
+    getActiveHand(state: State): Hand {
+        if (state.activeHand < state.playersHands.length) {
+            return state.playersHands[state.activeHand];
+        }
+        return state.dealersHand;
+    }
 
-   handleNextTurn() {
-       var state = this.gameService.handService.startTurn(this.state);
-       this.setState(state);
-   }
+    async onHit() {
+        const state = await axios.get("/blackjackApi/activeHand/hit") as State;
+        this.setState({ ... this.state, state });
+        if (this.isDealerInControl(state)) {
+            this.fireDealerTakesControl(state);
+        }
+    }
+
+    async onStay() {
+        const state = await axios.get("/blackjackApi/activeHand/stay") as State;
+        this.setState({ ... this.state, state });
+        if (this.isDealerInControl(state)) {
+            this.fireDealerTakesControl(state);
+        }
+    }
+
+    async onDealerInControl(state: State) {
+        var state: State;
+        if (helper.bestTotal(state.dealersHand) < 17) {
+            state = await axios.get("/blackjackApi/dealer/hit") as State;
+            this.fireDealerTakesControl(state);
+        } else {
+            state = await axios.get("/blackjackApi/endTurn") as State;
+        }
+        this.setState({ ... this.state, state });
+    }
+
+    async handleNextTurn() {
+        const state = await axios.get("/blackjackApi/nextTurn") as State;
+        this.setState({ ... this.state, state });
+    }
 
     private fireDealerTakesControl(state: State) {
         window.setTimeout(() => this.onDealerInControl(state), 1000);
     }
 
-   isDealerInControl(state: State) : boolean {
-       var activeHand = this.getActiveHand(state);
-       var inControl = activeHand === state.dealersHand;
-       console.log('hand=' + state.activeHand + " " + inControl);
-       return inControl;
-   }
+    isDealerInControl(state: State): boolean {
+        var activeHand = this.getActiveHand(state);
+        var inControl = activeHand === state.dealersHand;
+        console.log('hand=' + state.activeHand + " " + inControl);
+        return inControl;
+    }
 
-   getNextTurnButton() { 
-       if (!this.state.turnIsGoing) {
-          return <div className="gameNextTurn"><button onClick={() => this.handleNextTurn()}>Next Turn</button></div>; 
-       }
-   }
+    getNextTurnButton() {
+        if (!this.state.state.turnIsGoing) {
+            return <div className="gameNextTurn"><button onClick={() => this.handleNextTurn()}>Next Turn</button></div>;
+        }
+    }
 
-   onChangeBet(player: Player, bet: number) {
-       this.setState(this.gameService.changeBet(this.state, player, bet));
-   }
+    async onChangeBet(player: Player, bet: number) {
+        const state = await axios.post("/blackjackApi/player/changeBet", { id: player.id, bet }) as State;
+        this.setState({ ... this.state, state });
+    }
 
-   onSplit() {
-       this.setState(this.gameService.handService.splitActiveHand(this.state));
-   }
+    async onSplit() {
+        const state = await axios.get("/blackjackApi/activeHand/split") as State;
+        this.setState({ ... this.state, state });
+    }
 
-   render() {
-       return (
-          <div>
+    getHandsForPlayer(state: State, player: Player) : Array<Hand> {
+        var hands = state.playersHands.filter(h => h.player.id === player.id);
+        return hands;
+    }
+
+    render() {
+        return (
             <div>
-                <button onClick={() => this.handleLogin()}>Login</button>
-                <button onClick={() => this.handleRegister()}>Register</button>              
-            </div>
-            <div>
-                Current: {this.state.currentUser?.name}
-            </div>
-            <div>
-                <h2>Game</h2>
-                <table>
-                    <tr>
-                        {this.state.currentGame.players.map((value) => {
-                            return <td>
-                                <PlayerComponent player={value} 
-                                    hands={this.gameService.getHandsForPlayer(this.state, value)} 
-                                    activeHand={this.getActiveHand(this.state)} 
-                                    canChangeBet={!this.state.turnIsGoing}
-                                    onHit={() => this.onHit()} 
-                                    onStay={() => this.onStay()}
-                                    onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
-                                    onSplit={() => this.onSplit()}
+                <div>
+                    <button onClick={() => this.handleLogin()}>Login</button>
+                    <button onClick={() => this.handleRegister()}>Register</button>
+                </div>
+                <div>
+                    Current: {this.state.currentUser?.name}
+                </div>
+                <div>
+                    <h2>Game</h2>
+                    <table>
+                        <tr>
+                            {this.state.currentGame.players.map((value) => {
+                                return <td>
+                                    <PlayerComponent player={value}
+                                        hands={this.getHandsForPlayer(this.state.state, value)}
+                                        activeHand={this.getActiveHand(this.state.state)}
+                                        canChangeBet={!this.state.state.turnIsGoing}
+                                        onHit={() => this.onHit()}
+                                        onStay={() => this.onStay()}
+                                        onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
+                                        onSplit={() => this.onSplit()}
                                     />
+                                </td>
+                            })}
+                        </tr>
+                        <tr>
+                            <td colSpan={this.state.state.currentGame.players.length} align="center">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {this.getNextTurnButton()}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <HandComponent hand={this.state.state.dealersHand}
+                                                    isActive={this.state.state.turnIsGoing && this.getActiveHand(this.state.state) === this.state.state.dealersHand}
+                                                    onHit={() => this.onHit()}
+                                                    onStay={() => this.onStay()}
+                                                    onSplit={() => this.onSplit()}
+                                                    isDealer={true} />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </td>
-                        })}
-                    </tr>
-                    <tr>
-                        <td colSpan={this.state.currentGame.players.length} align="center">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            {this.getNextTurnButton()}             
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                        <HandComponent hand={this.state.dealersHand} 
-                                            isActive={this.state.turnIsGoing && this.getActiveHand(this.state) === this.state.dealersHand}
-                                            onHit={() => this.onHit()} 
-                                            onStay={() => this.onStay()}
-                                            onSplit={() => this.onSplit()}
-                                            isDealer={true}/>             
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            
-                        </td>
-                    </tr>
-                </table>
+                        </tr>
+                    </table>
+                </div>
             </div>
-          </div>
-       )
-   }
+        )
+    }
 }

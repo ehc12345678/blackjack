@@ -32,7 +32,7 @@ class LoginController {
 
 	public register(req: Request<RegisterForm>, res: Response) : void {
 		var loginId = this.userService.getNewLoginId(this.getState());
-		this.setState(res, (state) =>  this.userService.signUp(state, req.body.name, loginId));
+		res.end(this.userService.signUp(this.server.state, req.body.name));
 	}
 
 	private setState(res: Response, func: (state: State) => State) {
@@ -50,7 +50,6 @@ const defaultState = {
 	dealersHand: {},
 	activeHand: {},
 	activeUsers: new Map(),
-	currentUser: null,
 	turnIsGoing: false
 } as State;
 

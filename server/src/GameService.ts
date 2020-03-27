@@ -70,11 +70,6 @@ export class GameService {
         return this.handService;
     }
 
-    getHandsForPlayer(state: State, player: Player) : Array<Hand> {
-        var hands = state.playersHands.filter(h => h.player.id === player.id);
-        return hands;
-    }
-
     changeBet(state: State, player: Player, bet: number) {
         var { currentGame } = state;
         currentGame = this.modifyPlayer(currentGame, this.setCurrentBet(player, bet));

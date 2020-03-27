@@ -3,15 +3,21 @@ import { State } from '../../client/src/store/State';
 import { User } from '../../client/src/store/User';
 
 export class UserService {
+    registeredUsers: Map<String, User>;
+
+    constructor() {
+        this.registeredUsers = new Map();
+    }
+
     getNewLoginId(state: State) : string {
         return "user" + state.activeUsers.size;
     }
 
-    signUp(state: State, name: string, id: string) : State {
+    signUp(state: State, name: string) : string {
+        const id =  this.getNewLoginId(state);
         const user = {name, id} as User;
-        var activeUsers = new Map(state.activeUsers);
-        activeUsers.set(id, user);
-        return {...state, activeUsers, currentUser: user};
+        this.registeredUsers.set(id, user);
+        return id;
     }
 
     login(state: State, id: string) : State {
@@ -19,7 +25,7 @@ export class UserService {
         if (user) {
             var activeUsers = new Map(state.activeUsers);
             activeUsers.set(id, user);
-            return {...state, activeUsers, currentUser: user};
+            return {...state, activeUsers};
         }
         return state;
     }
@@ -29,17 +35,16 @@ export class UserService {
         if (user) {
             var activeUsers = new Map(state.activeUsers);
             activeUsers.delete(id);
-            return {...state, activeUsers, currentUser: user};
+            return {...state, activeUsers};
         }
         return state;
     }
 
     lookup(state: State, id: string) : User | null {
-        const user = state.activeUsers.get(id);
+        const user = this.registeredUsers.get(id);
         if (user) {
             return user;
         }
-        // TODO: call API
         return null;
     }
 
