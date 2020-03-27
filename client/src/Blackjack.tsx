@@ -1,7 +1,4 @@
 import React, {Component} from 'react'; 
-import { UserService } from './store/UserService';
-import { GameService } from './store/GameService';
-import { State, defaultState } from './store/State';
 import { PlayerComponent } from './views/Components/PlayerComponent';
 import { HandComponent } from './views/Components/HandComponent';
 import './App.css';

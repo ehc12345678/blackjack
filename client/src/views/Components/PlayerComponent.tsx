@@ -26,7 +26,7 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
 
     constructor(props: PlayerProperties) {
         super(props);
-        this.state = {changeBetVisible: false, bet: props.player.currentBet()};
+        this.state = {changeBetVisible: false, bet: props.player.currentBet};
         this.toggleBetVisiblity = this.handleToggleBetVisibility.bind(this);
         this.onSetBet = this.handleSetBet.bind(this);
         this.onBetValueChange = this.handleBetValueChange.bind(this);
@@ -68,9 +68,9 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
     render() {
         return (
         <div className="player">
-            <div className="playerName">{this.props.player.name()}</div>
-            <div className="playerChips">Chips: {this.props.player.chipBalance()}</div>
-            <div className="playerCash">Cash: {this.props.player.cashBalance()}</div>
+            <div className="playerName">{this.props.player.name}</div>
+            <div className="playerChips">Chips: {this.props.player.chipBalance}</div>
+            <div className="playerCash">Cash: {this.props.player.cashBalance}</div>
             { this.getBetControls() }
             <div className="hands">
                 {this.props.hands.map((value) => {
