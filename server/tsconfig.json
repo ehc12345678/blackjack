@@ -1,31 +1,37 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "baseUrl": "./",
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "pretty": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "outDir": "dist",
+    "removeComments": true,
     "sourceMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "strict": true,
+    "target": "es6",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noEmit": true,
-    "outDir": "./dist"
+    "paths": {
+      "@client/*": [
+        "../client/src/store"
+      ],
+      "@server": [
+        "src"
+      ]
+    },
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "include": [
-      "src/**/*.ts",
-      "../client/src/state/*.ts"
+    "src/**/*.ts",
+    "../client/src/store/*.ts"
   ],
   "exclude": [
-      "src/public",	
-      "node_modules"
+    "src/public/"
   ]
 }

@@ -1,11 +1,10 @@
-import { blackjackApiRouter } from './routes/blackjackApi';
+import { Router } from 'express';
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-
 var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
@@ -17,8 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('blackjackApi', blackjackApiRouter);
+app.use('/api', indexRouter);
 
 // catch 404 and forward to error handler
 // app.use(function(req: Request, res: Response) {
@@ -35,5 +33,11 @@ app.use('blackjackApi', blackjackApiRouter);
 //   res.status(err.status || 500);
 //   res.render('error');
 // });
+
+var port = process.env.PORT || 5000;
+
+app.listen(port, function () {
+  console.log('Black jack server listening on port ' + port + '!');
+});
 
 module.exports = app;

@@ -61,7 +61,12 @@ export class GameService {
     startGame(state: State) : State {
         var { currentGame } = state;
         if (currentGame.players.length === 0) {
-            return state;
+            var players : Array<Player>;
+            players = state.activeUsers.map(user => {
+                return {id: user.id, name: user.name, currentBet: 40, chipBalance: 5000, cashBalance: 100} as Player;
+            });            
+            currentGame = {...currentGame, players};
+            return {...state, currentGame};
         }
         return state;
     }

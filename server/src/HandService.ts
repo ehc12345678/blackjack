@@ -55,6 +55,21 @@ export class HandService {
         return this.nextActiveHand(newState);
     }
 
+    doubleDownActiveHand(state: State) : State {
+        const hand = this.getActiveHand(state);
+        var newState = state;
+        if (hand.cards.length === 2) {
+            newState = this.hitActiveHand(newState);
+            newState = this.stayActiveHand(newState);
+
+            // replace the active hand, by doubling the bet
+            var newHand = {...hand, bet: hand.bet * 2};
+            newState = { ...newState, playersHands: this.replace(newState.playersHands, newState.activeHand, newHand) };
+        }
+        
+        return newState;
+    }
+
     nextActiveHand(state: State) : State {
         return this.setActiveHand(state, state.activeHand + 1);
     }

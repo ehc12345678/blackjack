@@ -10,12 +10,12 @@ export class UserService {
     }
 
     getNewLoginId(state: State) : string {
-        return "user" + state.activeUsers.size;
+        return "user" + state.activeUsers.length;
     }
 
     signUp(state: State, name: string) : string {
         const id =  this.getNewLoginId(state);
-        const user = {name, id} as User;
+        const user = {id, name} as User;
         this.registeredUsers.set(id, user);
         return id;
     }
@@ -23,9 +23,9 @@ export class UserService {
     login(state: State, id: string) : State {
         const user = this.lookup(state, id);
         if (user) {
-            var activeUsers = new Map(state.activeUsers);
-            activeUsers.set(id, user);
-            return {...state, activeUsers};
+            var activeUsers = [...state.activeUsers, user];
+            state = {...state, activeUsers};
+            console.log('Logged in user=' + id + " state=" + JSON.stringify(state));
         }
         return state;
     }
@@ -33,9 +33,8 @@ export class UserService {
     logout(state: State, id: string) : State {
         const user = this.lookup(state, id);
         if (user) {
-            var activeUsers = new Map(state.activeUsers);
-            activeUsers.delete(id);
-            return {...state, activeUsers};
+            var activeUsers = state.activeUsers.filter(u => u.id !== user.id);
+            state = {...state, activeUsers};
         }
         return state;
     }
@@ -45,6 +44,7 @@ export class UserService {
         if (user) {
             return user;
         }
+        console.log('Could not find user with id=' + id);
         return null;
     }
 
@@ -52,14 +52,20 @@ export class UserService {
         return {name: user.name, id: user.id} as Player;
     }
 
+    getRegistered() : Array<String> {
+        return this.mapToIdArray(this.registeredUsers);
+    }
+
     getActivePlayersDisplay(state: State) : Array<String> {
+        return state.activeUsers.map(u => u.id);
+    }
+
+    mapToIdArray(map: Map<String, User>) : Array<String> {
         var ret = new Array<String>();
-        if (state) {
-            let i = state.activeUsers.values();
-            var user : User; 
-            while ((user = i.next().value)) {
-                ret.push(user.name);
-            }
+        let i = map.values();
+        var user : User; 
+        while ((user = i.next().value)) {
+            ret.push(user.id);
         }
         return ret;
     }
