@@ -1,6 +1,11 @@
 import { Player } from '../../client/src/store/Player';
 import { State } from '../../client/src/store/State';
 
+export type UserIdPair = {
+    id: string,
+    name: string
+};
+
 export class UserService {
     registeredUsers: Map<String, Player>;
 
@@ -47,22 +52,18 @@ export class UserService {
         return null;
     }
 
-    getRegistered() : Array<String> {
-        return this.mapToIdArray(this.registeredUsers);
+    getRegistered() : Array<UserIdPair> {
+        var ret = [];
+        let i = this.registeredUsers.values();
+        var user : Player; 
+        while ((user = i.next().value)) {
+            ret.push({id: user.id, name: user.name});
+        }
+        return ret;
     }
 
     getActivePlayersDisplay(state: State) : Array<String> {
         return state.activeUsers.map(u => u.id);
-    }
-
-    mapToIdArray(map: Map<String, Player>) : Array<String> {
-        var ret = new Array<String>();
-        let i = map.values();
-        var user : Player; 
-        while ((user = i.next().value)) {
-            ret.push(user.id);
-        }
-        return ret;
     }
 }
 export const theUserService = new UserService();

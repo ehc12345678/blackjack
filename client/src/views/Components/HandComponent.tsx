@@ -6,6 +6,7 @@ type HandProperties = {
     hand: Hand,                                                                                                                                                                                                                                                                                                                                                                                             
     isActive: boolean,
     isDealer: boolean,
+    isLoggedInUser: boolean,
     onHit: () => void,
     onStay: () => void,
     onSplit: () => void
@@ -52,7 +53,7 @@ export class HandComponent extends Component<HandProperties> {
     }
 
     buttonsShouldBeVisible() : boolean {
-        return !this.props.isDealer && this.props.isActive && this.props.hand.result === Result.PLAYING;
+        return !this.props.isDealer && this.props.isLoggedInUser && this.props.isActive && this.props.hand.result === Result.PLAYING;
     }
 
     getSplitButton() {

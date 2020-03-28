@@ -2,6 +2,7 @@ import { Game } from '../../client/src/store/Game';
 import { Player } from "../../client/src/store/Player";
 import { HandService, theHandService } from "./HandService";
 import { State } from "../../client/src/store/State";
+import { theUserService } from './UserService';
 
 const CHIPS_PER_DOLLAR = 100;
 
@@ -58,15 +59,6 @@ export class GameService {
     }
 
     startGame(state: State) : State {
-        var { currentGame } = state;
-        if (currentGame.players.length === 0) {
-            var players : Array<Player>;
-            players = state.activeUsers.map(user => {
-                return {id: user.id, name: user.name, currentBet: 40, chipBalance: 5000, cashBalance: 100} as Player;
-            });            
-            currentGame = {...currentGame, players};
-            return {...state, currentGame};
-        }
         return state;
     }
 
@@ -74,9 +66,12 @@ export class GameService {
         return this.handService;
     }
 
-    changeBet(state: State, player: Player, bet: number) {
+    changeBet(state: State, id: string, bet: number) {
         var { currentGame } = state;
-        currentGame = this.modifyPlayer(currentGame, this.setCurrentBet(player, bet));
+        var player = theUserService.lookup(state, id);
+        if (player != null) {
+            currentGame = this.modifyPlayer(currentGame, this.setCurrentBet(player, bet));
+        }
         return { ...state, currentGame };
     }
 }

@@ -6,6 +6,7 @@ var express = require('express');
 
 import userRouter from './userApi';
 import activeHandRouter from './activeHandApi';
+import dealerRouter from './dealerApi';
 import gameRouter from './gameApi';
 var baseRouter = express.Router();
 
@@ -20,6 +21,7 @@ export class Server {
     router.get('/state', this.getState.bind(this));
     router.use('/user', userRouter);
     router.use('/game', gameRouter);
+    router.use('/dealer', dealerRouter);
     router.use('/activehand', activeHandRouter);
 	}
 

@@ -22,17 +22,21 @@ export class CardComponent extends Component<CardProperties> {
     }
 
     private imagePath(card: Card) : string {
-        if (card === UnknownCard) {
+        if (this.isUnknown(card)) {
             return "/cards/Unknown.jpg";
         }
         return "/cards/" + this.cardValueToStr(card.value) + this.cardSuitToStr(card.suit) + ".jpg";  
     }
 
     private altText(card: Card) : string {
-        if (card === UnknownCard) {
+        if (this.isUnknown(card)) {
             return "Unknown";
         }
         return this.cardValueToStr(card.value) + this.cardSuitToStr(card.suit);
+    }
+
+    private isUnknown(card: Card) : boolean {
+        return (card.value === UnknownCard.value && card.suit === UnknownCard.suit);
     }
 
     render() {

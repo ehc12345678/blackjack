@@ -95,7 +95,7 @@ export class HandService {
         var cards = state.dealersHand.cards.filter(card => card !== UnknownCard)
         cards.push( this.cardService.nextCard());
         var dealersHand = {...state.dealersHand, cards};
-        return this.endTurn({...state, dealersHand});
+        return {...state, dealersHand};
     }
 
     dealerTakesCard(state: State) : State {

@@ -8,6 +8,7 @@ export type PlayerProperties = {
    hands: Array<Hand>,
    activeHand: Hand,
    canChangeBet: boolean,
+   isLoggedInPlayer: boolean,
    onHit: () => void,
    onStay: () => void,
    onSplit: () => void,
@@ -49,7 +50,7 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
     getBetControls() {
         var changeControlsForm;
         var changeBetButton;
-        if (this.state.changeBetVisible) {
+        if (this.state.changeBetVisible && this.props.isLoggedInPlayer) {
             changeControlsForm = (
                 <div className="playerBetForm">
                     <input type="text" value={this.state.bet} onChange={this.onBetValueChange}/>
@@ -59,7 +60,7 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
             );
         } 
         
-        if (this.props.canChangeBet) {
+        if (this.props.canChangeBet && this.props.isLoggedInPlayer) {
             changeBetButton = <button onClick={this.toggleBetVisiblity}>Change Bet</button>
             return <div className="playerBet">Current Bet: ${this.state.bet}{changeBetButton}{changeControlsForm}</div>
         }
@@ -74,7 +75,7 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
             { this.getBetControls() }
             <div className="hands">
                 {this.props.hands.map((value) => {
-                    return <HandComponent hand={value} isActive={this.props.activeHand === value}
+                    return <HandComponent hand={value} isActive={this.props.activeHand === value} isLoggedInUser={this.props.isLoggedInPlayer}
                         onHit={this.props.onHit} onStay={this.props.onStay} onSplit={this.props.onSplit} isDealer={false}/>
                 })}
             </div>    

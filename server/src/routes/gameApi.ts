@@ -14,6 +14,11 @@ type PlayerForm = {
 	id: string
 };
 
+type ChangeBetForm = {
+	id: string,
+	bet: string
+};
+
 class GameApi {
 	gameService: GameService;
 	userService: UserService;
@@ -26,7 +31,8 @@ class GameApi {
     addRoutes(router: Router) {
         router.put('/', this.createGame.bind(this));
         router.get('/start', this.startGame.bind(this));
-        router.post('/join', this.joinGame.bind(this));
+		router.post('/join', this.joinGame.bind(this));
+		router.post('/changeBet', this.changeBet.bind(this));
     }
 	
 	public createGame(req: Request, res: Response<State>) : void {
@@ -44,6 +50,10 @@ class GameApi {
 		} else {
 			res.status(404).end('player not found ' + req.body.id);
 		}
+	}
+
+	public changeBet(req: Request<ChangeBetForm>, res: Response<State>) : void {
+		res.end(JSON.stringify(this.gameService.changeBet(this.getState(), req.body.id, +req.body.bet)));
 	}
 	
 	private setState(res: Response, func: (state: State) => State) {

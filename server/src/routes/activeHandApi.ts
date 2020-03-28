@@ -16,30 +16,35 @@ class ActiveHandApi {
     }
 
     addRoutes(router: Router) {
-        router.get('/startTurn', this.startTurn.bind(this));
+		router.get('/startTurn', this.startTurn.bind(this));
+        router.get('/endTurn', this.endTurn.bind(this));
         router.get('/hit', this.hit.bind(this));
         router.get('/stay', this.stay.bind(this));
         router.get('/split', this.split.bind(this));
-        router.get('/doubleDown', this.doubleDown.bind(this));
+		router.get('/doubleDown', this.doubleDown.bind(this));
 	}
 	
-	public startTurn(req: Request, res: Response<State>) : void {
+	public startTurn(_req: Request, res: Response<State>) : void {
 		this.setState(res, (state) => this.handService.startTurn(state));
 	}
-	
-	public hit(req: Request, res: Response<State>) : void {
+
+	public endTurn(_req: Request, res: Response<State>) : void {
+		this.setState(res, (state) => this.handService.endTurn(state));
+	}
+
+	public hit(_req: Request, res: Response<State>) : void {
 		this.setState(res, (state) => this.handService.hitActiveHand(state));
 	}
 
-	public stay(req: Request, res: Response<State>) : void {
+	public stay(_req: Request, res: Response<State>) : void {
 		this.setState(res, (state) => this.handService.stayActiveHand(state));
 	}
 
-	public split(req: Request, res: Response<State>) : void {
+	public split(_req: Request, res: Response<State>) : void {
 		this.setState(res, (state) => this.handService.splitActiveHand(state));
 	}
 
-	public doubleDown(req: Request, res: Response<State>) : void {
+	public doubleDown(_req: Request, res: Response<State>) : void {
 		this.setState(res, (state) => this.handService.doubleDownActiveHand(state));
     }
     

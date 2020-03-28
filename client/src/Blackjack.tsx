@@ -7,6 +7,7 @@ import { Player } from './store/Player';
 import { State, defaultState } from './store/State';
 import axios, { AxiosResponse } from 'axios';
 import { Game } from './store/Game';
+import { LoginComponent } from './views/LoginComponent';
 
 type BlackjackProps = {
 
@@ -35,28 +36,25 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     }
 
     async componentDidMount() {
-        const state = await axios.get("/api/state") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/state") as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
-    async handleLogin() {
-        const index = this.state.activeUsers.length;
-        const loginId = 'Login' + index;
-        this.doLogin(loginId);
+    async handleRegister(name: string) {
+        const { data } = await axios.post("/api/user/register", { name }) as AxiosResponse<Player>;
+        this.handleLogin(data.id);
     }
 
-    async handleRegister() {
-        const index = this.state.activeUsers.length;
-        const { data } = await axios.post("/api/user/register", { name: 'Register' + index }) as AxiosResponse<Player>;
-        this.doLogin(data.id);
-    }
-
-    async doLogin(loginId: string) {
+    async handleLogin(loginId: string) {
         console.log('Logging in ' + loginId);
         await axios.post("/api/user/login", { loginId: loginId });
         const { data } = await axios.post("/api/game/join", {id: loginId}) as AxiosResponse<State>;
-        var currentUser = await axios.get("/api/user/" + loginId) as Player;
-        this.setState({...this.state, ...data, currentUser});
+        var currentUserResponse = await axios.get("/api/user/" + loginId) as AxiosResponse<Player>;
+        this.setState({...this.state, ...data, currentUser: currentUserResponse.data});
+    }
+
+    isLoggedInPlayer(player: Player) {
+        return player.id === this.state.currentUser?.id;
     }
 
     async handleCreateGame() {
@@ -126,7 +124,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     }
 
     async onChangeBet(player: Player, bet: number) {
-        const { data } = await axios.post("/api/user/changeBet", { id: player.id, bet }) as AxiosResponse<State>;
+        const { data } = await axios.post("/api/game/changeBet", { id: player.id, bet }) as AxiosResponse<State>;
         this.setServerState(data);
     }
 
@@ -140,19 +138,25 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
         return hands;
     }
 
+    getLoginComponent() {
+        if (this.state.currentUser === null) {
+            return <LoginComponent 
+                onLogin={(loginId: string) => this.handleLogin(loginId)} 
+                onRegister={(name: string) => this.handleRegister(name)}/>
+        }
+        return (
+            <div>Current: {this.state.currentUser?.name}</div>
+        );
+    }
+
     render() {
         return (
             <div>
+                {this.getLoginComponent()}
+                <h2>Game</h2>
                 <div>
-                    <button onClick={() => this.handleLogin()}>Login</button>
-                    <button onClick={() => this.handleRegister()}>Register</button>
-                </div>
-                <div>
-                    Current: {this.state.currentUser?.name}
-                </div>
-                <div>
-                    <h2>Game</h2>
                     <table>
+                        <tbody>
                         <tr>
                             {this.state.currentGame.players.map((value) => {
                                 return <td>
@@ -160,6 +164,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                                         hands={this.getHandsForPlayer(value)}
                                         activeHand={this.getActiveHand()}
                                         canChangeBet={!this.state.turnIsGoing}
+                                        isLoggedInPlayer={this.isLoggedInPlayer(value)}
                                         onHit={() => this.onHit()}
                                         onStay={() => this.onStay()}
                                         onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
@@ -181,6 +186,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                                             <td>
                                                 <HandComponent hand={this.state.dealersHand}
                                                     isActive={this.state.turnIsGoing && this.getActiveHand() === this.state.dealersHand}
+                                                    isLoggedInUser={false}
                                                     onHit={() => this.onHit()}
                                                     onStay={() => this.onStay()}
                                                     onSplit={() => this.onSplit()}
@@ -191,6 +197,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                                 </table>
                             </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
