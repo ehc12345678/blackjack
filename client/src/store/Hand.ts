@@ -1,5 +1,4 @@
 import { Card } from './Card';
-import { Player } from './Player';
 
 export enum Result { LOSS = "Loss", PUSH = "Push", WIN = "Win", BLACKJACK = "Blackjack", PLAYING = "Playing" };
 
@@ -14,7 +13,7 @@ export type Hand = {
 export class HandHelper {
     canSplit(hand: Hand): boolean {
         const { cards } = hand;
-        return (cards.length === 2 && cards[0].value == cards[1].value);
+        return (cards.length === 2 && cards[0].value === cards[1].value);
     }
 
     highestTotal(hand: Hand) : number {

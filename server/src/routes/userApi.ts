@@ -1,6 +1,6 @@
 import { server } from './index';
 import { Router } from 'express';
-import { UserService } from '../UserService';
+import { UserService, theUserService } from '../UserService';
 import { Request, Response } from 'express';
 import { State } from "../../../client/src/store/State";
 
@@ -25,7 +25,7 @@ class UserApi {
     userService: UserService;
 
     constructor() {
-        this.userService = new UserService();
+        this.userService = theUserService;
     }
 
     addRoutes(router: Router) {
@@ -45,8 +45,9 @@ class UserApi {
 	}
 
 	public register(req: Request<RegisterForm>, res: Response<RegisterResponse>) : void {
-		var registerResponse = this.userService.signUp(this.getState(), req.body.name);
-		res.end(JSON.stringify(registerResponse));
+		var loginId = this.userService.signUp(this.getState(), req.body.name);
+		var person = this.userService.lookup(this.getState(), loginId);
+		res.end(JSON.stringify(person));
     }
     
     public getAllRegistered(req: Request, res: Response) : void {

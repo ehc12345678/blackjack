@@ -1,7 +1,5 @@
-import { State } from '../../../client/src/store/State';
+import { State, defaultState } from '../../../client/src/store/State';
 import { Router } from 'express';
-import { Game } from '../../../client/src/store/Game';
-import { Hand } from '../../../client/src/store/Hand';
 import { Request, Response } from 'express';
 
 var express = require('express');
@@ -10,15 +8,6 @@ import userRouter from './userApi';
 import activeHandRouter from './activeHandApi';
 import gameRouter from './gameApi';
 var baseRouter = express.Router();
-
-const defaultState = {
-	currentGame: {} as Game,
-	playersHands: [],
-	dealersHand: {} as Hand,
-	activeHand: 0,
-	activeUsers: [],
-	turnIsGoing: false
-} as State;
 
 export class Server {
 	state: State;

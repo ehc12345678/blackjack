@@ -1,8 +1,7 @@
 import { Game } from '../../client/src/store/Game';
 import { Player } from "../../client/src/store/Player";
-import { HandService } from "./HandService";
+import { HandService, theHandService } from "./HandService";
 import { State } from "../../client/src/store/State";
-import { Hand } from "../../client/src/store/Hand";
 
 const CHIPS_PER_DOLLAR = 100;
 
@@ -10,7 +9,7 @@ export class GameService {
     handService: HandService;
 
     constructor() {
-        this.handService = new HandService();
+        this.handService = theHandService;
     }
 
     createGame(state: State) : State {
@@ -81,3 +80,4 @@ export class GameService {
         return { ...state, currentGame };
     }
 }
+export const theGameService = new GameService();

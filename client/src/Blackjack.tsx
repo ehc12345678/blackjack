@@ -4,8 +4,8 @@ import { HandComponent } from './views/Components/HandComponent';
 import './App.css';
 import { Hand, HandHelper } from './store/Hand';
 import { Player } from './store/Player';
-import { State } from './store/State';
-import axios from 'axios';
+import { State, defaultState } from './store/State';
+import axios, { AxiosResponse } from 'axios';
 import { Game } from './store/Game';
 
 type BlackjackProps = {
@@ -26,7 +26,7 @@ const helper = new HandHelper();
 export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     constructor(props: BlackjackProps) {
         super(props);
-        this.state = { } as BlackjackState;
+        this.state = { ...defaultState, currentUser: null } as BlackjackState;
     }
 
     private setServerState(state: State) {
@@ -47,24 +47,26 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
 
     async handleRegister() {
         const index = this.state.activeUsers.length;
-        const loginId = await axios.post("/api/user/register", { name: 'Register' + index }) as string;
-        this.doLogin(loginId);
+        const { data } = await axios.post("/api/user/register", { name: 'Register' + index }) as AxiosResponse<Player>;
+        this.doLogin(data.id);
     }
 
     async doLogin(loginId: string) {
-        const state = await axios.post("/api/user/login", { loginId }) as State;
+        console.log('Logging in ' + loginId);
+        await axios.post("/api/user/login", { loginId: loginId });
+        const { data } = await axios.post("/api/game/join", {id: loginId}) as AxiosResponse<State>;
         var currentUser = await axios.get("/api/user/" + loginId) as Player;
-        this.setState({...this.state, ...state, currentUser});
+        this.setState({...this.state, ...data, currentUser});
     }
 
     async handleCreateGame() {
-        const state = await axios.put("/api/game/") as State;
-        this.setServerState(state);
+        const { data } = await axios.put("/api/game/")  as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
     async handleStartGame() {
-        const state = await axios.get("/api/game/start") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/game/start") as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
     getActiveHand(): Hand {
@@ -75,35 +77,35 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     }
 
     async onHit() {
-        const state = await axios.get("/api/activeHand/hit") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/activeHand/hit") as AxiosResponse<State>;
+        this.setServerState(data);
         if (this.isDealerInControl()) {
             this.fireDealerTakesControl();
         }
     }
 
     async onStay() {
-        const state = await axios.get("/api/activeHand/stay") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/activeHand/stay") as AxiosResponse<State>;
+        this.setServerState(data);
         if (this.isDealerInControl()) {
             this.fireDealerTakesControl();
         }
     }
 
     async onDealerInControl() {
-        var state: State;
         if (helper.bestTotal(this.state.dealersHand) < 17) {
-            state = await axios.get("/api/dealer/hit") as State;
+            const { data } = await axios.get("/api/dealer/hit") as AxiosResponse<State>;
             this.fireDealerTakesControl();
+            this.setServerState(data);
         } else {
-            state = await axios.get("/api/activeHand/endTurn") as State;
+            const { data } = await axios.get("/api/activeHand/endTurn") as AxiosResponse<State>;
+            this.setServerState(data);
         }
-        this.setServerState(state);
     }
 
     async handleNextTurn() {
-        const state = await axios.get("/api/activeHand/nextTurn") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/activeHand/startTurn") as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
     private fireDealerTakesControl() {
@@ -124,13 +126,13 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     }
 
     async onChangeBet(player: Player, bet: number) {
-        const state = await axios.post("/api/user/changeBet", { id: player.id, bet }) as State;
-        this.setServerState(state);
+        const { data } = await axios.post("/api/user/changeBet", { id: player.id, bet }) as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
     async onSplit() {
-        const state = await axios.get("/api/activeHand/split") as State;
-        this.setServerState(state);
+        const { data } = await axios.get("/api/activeHand/split") as AxiosResponse<State>;
+        this.setServerState(data);
     }
 
     getHandsForPlayer(player: Player) : Array<Hand> {

@@ -65,3 +65,4 @@ export class UserService {
         return ret;
     }
 }
+export const theUserService = new UserService();

@@ -17,3 +17,5 @@ export class CardService {
         this.deckShoe.shuffle();
     }
 }
+
+export const theCardService = new CardService();

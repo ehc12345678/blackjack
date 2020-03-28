@@ -1,6 +1,6 @@
 import { Hand, Result, HandHelper } from '../../client/src/store/Hand';
 import { UnknownCard, Card } from '../../client/src/store/Card';
-import { CardService } from './CardService';
+import { CardService, theCardService } from './CardService';
 import { State } from '../../client/src/store/State';
 import { Player } from '../../client/src/store/Player';
 import { Game } from '../../client/src/store/Game';
@@ -13,7 +13,7 @@ export class HandService {
     cardService: CardService;
     
     constructor() {
-        this.cardService = new CardService();
+        this.cardService = theCardService;
     }
 
     startTurn(state: State) : State {
@@ -224,3 +224,5 @@ export class HandService {
         return {...game, players};
     }
 }
+
+export const theHandService = new HandService();

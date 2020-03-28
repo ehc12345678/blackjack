@@ -2,7 +2,7 @@ import { server } from './index';
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import { State } from "../../../client/src/store/State";
-import { HandService } from '../HandService';
+import { HandService, theHandService } from '../HandService';
 
 var express = require('express');
 
@@ -12,7 +12,7 @@ class ActiveHandApi {
     handService: HandService;
 
     constructor() {
-        this.handService = new HandService();
+        this.handService = theHandService;
     }
 
     addRoutes(router: Router) {

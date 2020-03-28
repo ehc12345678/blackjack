@@ -1,5 +1,5 @@
-// import { default as App } from './App';
-// import { default as Loader } from './Loader';
-import { default as TodoLists } from './TodoLists';
+import { CardComponent } from './CardComponent';
+import { HandComponent } from './HandComponent';
+import { PlayerComponent } from '././PlayerComponent';
 
-export { TodoLists };
+export { CardComponent, HandComponent, PlayerComponent };
