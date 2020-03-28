@@ -5,7 +5,7 @@ export enum Result { LOSS = "Loss", PUSH = "Push", WIN = "Win", BLACKJACK = "Bla
 
 export type Hand = {
     readonly cards: Array<Card>;
-    readonly player: Player;
+    readonly player: string;
     readonly bet: number;
     readonly isStaying: boolean;
     readonly result: Result;

@@ -33,7 +33,7 @@ export class HandService {
     }
 
     create(player: Player, currentBet: number) : Hand {
-        return {player, bet: currentBet, cards: [], isStaying: false, result: Result.PLAYING};
+        return {player: player.id, bet: currentBet, cards: [], isStaying: false, result: Result.PLAYING};
     }
 
     getActiveHand(state: State) : Hand {
@@ -126,18 +126,19 @@ export class HandService {
         for (let hand of state.playersHands) {
             hand = this.setResult(hand, this.handResult(hand, state.dealersHand));
             playersHands.push(hand);
+            var player = this.lookupPlayer(state, hand.player);
             switch (hand.result) {
                 case Result.LOSS:
-                    currentGame = this.modifyPlayer(currentGame, this.removeChips(hand.player, hand.bet));
+                    currentGame = this.modifyPlayer(currentGame, this.removeChips(player, hand.bet));
                     break;
                 case Result.PUSH:
                 default:    
                     break;
                 case Result.WIN:
-                    currentGame = this.modifyPlayer(currentGame, this.addChips(hand.player, hand.bet));
+                    currentGame = this.modifyPlayer(currentGame, this.addChips(player, hand.bet));
                     break;
                 case Result.BLACKJACK:
-                    currentGame = this.modifyPlayer(currentGame, this.addChips(hand.player, hand.bet * 1.5));
+                    currentGame = this.modifyPlayer(currentGame, this.addChips(player, hand.bet * 1.5));
                     break;
             }
         }
@@ -165,7 +166,7 @@ export class HandService {
     }
 
     static create(player: Player, bet: number) : Hand {
-        return ({cards: [], player, bet, isStaying: false, result: Result.PLAYING});
+        return ({cards: [], player: player.id, bet, isStaying: false, result: Result.PLAYING});
     }
 
     addCard(hand: Hand, card: Card) : Hand {
@@ -201,6 +202,14 @@ export class HandService {
             return this.addChips(player, -chips);
         }
         return player; 
+    }
+
+    lookupPlayer(state: State, id: string) : Player {
+        var player = state.activeUsers.find(player => player.id === id);
+        if (player === undefined) {
+            throw 'Something bad happened, could not find player ' + id;
+        }
+        return player;
     }
     
     modifyPlayer(game: Game, player: Player) : Game {

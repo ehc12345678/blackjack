@@ -1,9 +1,8 @@
 import { Player } from '../../client/src/store/Player';
 import { State } from '../../client/src/store/State';
-import { User } from '../../client/src/store/User';
 
 export class UserService {
-    registeredUsers: Map<String, User>;
+    registeredUsers: Map<String, Player>;
 
     constructor() {
         this.registeredUsers = new Map();
@@ -15,7 +14,7 @@ export class UserService {
 
     signUp(state: State, name: string) : string {
         const id =  this.getNewLoginId(state);
-        const user = {id, name} as User;
+        const user = {id, name, currentBet: 80, chipBalance: 5000, cashBalance: 100} as Player;
         this.registeredUsers.set(id, user);
         return id;
     }
@@ -39,17 +38,13 @@ export class UserService {
         return state;
     }
 
-    lookup(state: State, id: string) : User | null {
+    lookup(state: State, id: string) : Player | null {
         const user = this.registeredUsers.get(id);
         if (user) {
             return user;
         }
         console.log('Could not find user with id=' + id);
         return null;
-    }
-
-    playerFromUser(user: User) : Player {
-        return {name: user.name, id: user.id} as Player;
     }
 
     getRegistered() : Array<String> {
@@ -60,10 +55,10 @@ export class UserService {
         return state.activeUsers.map(u => u.id);
     }
 
-    mapToIdArray(map: Map<String, User>) : Array<String> {
+    mapToIdArray(map: Map<String, Player>) : Array<String> {
         var ret = new Array<String>();
         let i = map.values();
-        var user : User; 
+        var user : Player; 
         while ((user = i.next().value)) {
             ret.push(user.id);
         }
