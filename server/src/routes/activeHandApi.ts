@@ -3,11 +3,13 @@ import { Router } from 'express';
 import { Request, Response } from 'express';
 import { State } from "../../../client/src/store/State";
 import { HandService, theHandService } from '../HandService';
+import { HandHelper } from '../../../client/src/store/Hand';
 
 var express = require('express');
 
 var activeHandRouter = express.Router();
 
+const handHelper = new HandHelper();
 class ActiveHandApi {
     handService: HandService;
 
@@ -52,11 +54,30 @@ class ActiveHandApi {
         var state = this.getState();
 		var newState = func.call(this, state);
 		res.end(server.setState(newState));
+
+		if (this.isDealerInControl(newState)) {
+			this.doDealer(newState);
+		}
 	}
 
 	private getState() : State {
 		return server.state;
 	}
+
+	doDealer(state: State) {
+		var newState = state;
+		if (this.isDealerInControl(state) && handHelper.bestTotal(state.dealersHand) < 17) {
+			newState = this.handService.dealerTakesCard(newState);
+			setTimeout(() => this.doDealer(newState), 500);
+		} else {
+			newState = this.handService.endTurn(state);
+		}
+		server.setState(newState);
+    }
+
+    isDealerInControl(state: State): boolean {
+		return state.activeHand >= state.playersHands.length && !handHelper.isDone(state.dealersHand);
+    }
 }
 const activeHandApi = new ActiveHandApi();
 activeHandApi.addRoutes(activeHandRouter);
