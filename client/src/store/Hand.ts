@@ -16,6 +16,11 @@ export class HandHelper {
         return (cards.length === 2 && cards[0].value === cards[1].value);
     }
 
+    canDoubleDown(hand: Hand) : boolean { 
+        const { cards } = hand;
+        return cards.length === 2;
+    }
+
     highestTotal(hand: Hand) : number {
         var total = 0;
         for (let card of hand.cards) {

@@ -1,4 +1,4 @@
-import { server } from './index';
+import { server } from '../index';
 import { Router } from 'express';
 import { UserService, theUserService } from '../UserService';
 import { Request, Response } from 'express';
@@ -33,7 +33,7 @@ class UserApi {
         router.post('/logout', this.logout.bind(this));
         router.post('/register', this.register.bind(this));
         router.get('/', this.getAllRegistered.bind(this));
-        router.get('/:loginId', this.getRegistered.bind(this));
+		router.get('/:loginId', this.getRegistered.bind(this));
     }
 	
 	public login(req: Request<LoginForm>, res: Response<State>) : void {
@@ -56,8 +56,8 @@ class UserApi {
 
     public getRegistered(req: Request<LoginForm>, res: Response) : void {
         res.end(JSON.stringify(this.userService.lookup(this.getState(), req.params.loginId)));
-    }
-
+	}
+	
 	private setState(res: Response, func: (state: State) => State) {
         var state = this.getState();
 		var newState = func.call(this, state);

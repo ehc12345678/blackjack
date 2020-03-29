@@ -194,6 +194,7 @@ export class HandService {
 
     public addChips(player: Player, chips: number) : Player {
         var chipBalance = player.chipBalance + chips;
+        console.log('Adding ' + chips + ' to ' + player.name + ' new balance=' + chipBalance);
         return {...player, chipBalance};
     }
 

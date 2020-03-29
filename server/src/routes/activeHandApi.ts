@@ -1,4 +1,4 @@
-import { server } from './index';
+import { server } from '../index';
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import { State } from "../../../client/src/store/State";

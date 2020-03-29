@@ -8,6 +8,7 @@ import { State, defaultState } from './store/State';
 import axios, { AxiosResponse } from 'axios';
 import { Game } from './store/Game';
 import { LoginComponent } from './views/LoginComponent';
+import { w3cwebsocket as W3CWebSocket, IMessageEvent } from "websocket";
 
 type BlackjackProps = {
 
@@ -25,9 +26,12 @@ type BlackjackState = {
 
 const helper = new HandHelper();
 export class Blackjack extends Component<BlackjackProps, BlackjackState> {
+    webSocketClient: W3CWebSocket;
+
     constructor(props: BlackjackProps) {
         super(props);
         this.state = { ...defaultState, currentUser: null } as BlackjackState;
+        this.webSocketClient = new W3CWebSocket("ws://localhost:10116");
     }
 
     private setServerState(state: State) {
@@ -38,6 +42,15 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     async componentDidMount() {
         const { data } = await axios.get("/api/state") as AxiosResponse<State>;
         this.setServerState(data);
+
+        this.webSocketClient.onopen = () => {
+            console.log('WebSocket Client Connected');
+          };
+        this.webSocketClient.onmessage = (message: IMessageEvent) => {
+            var jsonString = message.data as string;
+            console.log('WebSocket message received: ' + jsonString);
+            this.setServerState(JSON.parse(jsonString));
+        };
     }
 
     async handleRegister(name: string) {
@@ -133,6 +146,11 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
         this.setServerState(data);
     }
 
+    async onDoubleDown() {
+        const { data } = await axios.get("/api/activeHand/doubleDown") as AxiosResponse<State>;
+        this.setServerState(data);
+    }
+
     getHandsForPlayer(player: Player) : Array<Hand> {
         var hands = this.state.playersHands.filter(h => h.player === player.id);
         return hands;
@@ -169,6 +187,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                                         onStay={() => this.onStay()}
                                         onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
                                         onSplit={() => this.onSplit()}
+                                        onDoubleDown={() => this.onDoubleDown()}
                                     />
                                 </td>
                             })}
@@ -190,6 +209,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                                                     onHit={() => this.onHit()}
                                                     onStay={() => this.onStay()}
                                                     onSplit={() => this.onSplit()}
+                                                    onDoubleDown={() => this.onDoubleDown()}
                                                     isDealer={true} />
                                             </td>
                                         </tr>

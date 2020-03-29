@@ -9,7 +9,8 @@ type HandProperties = {
     isLoggedInUser: boolean,
     onHit: () => void,
     onStay: () => void,
-    onSplit: () => void
+    onSplit: () => void,
+    onDoubleDown: () => void
 };
 
 const helper = new HandHelper();
@@ -62,6 +63,12 @@ export class HandComponent extends Component<HandProperties> {
         }
     }
 
+    getDoubleDownButton() {
+        if (helper.canDoubleDown(this.props.hand) && this.buttonsShouldBeVisible()) {
+            return <button onClick={() => this.props.onDoubleDown()}>Double Down</button>
+        }
+    }
+
     render() {
         var active = this.props.isActive ? "Active" : "";
         var btnActive = this.buttonsShouldBeVisible() ? "Active" : "";
@@ -82,6 +89,7 @@ export class HandComponent extends Component<HandProperties> {
                         disabled={!this.canStay()}
                         onClick={() => this.props.onStay()}>Stay</button>
                     { this.getSplitButton() }    
+                    { this.getDoubleDownButton() }
                 </div> 
                 {this.getHandResult()}
             </div>

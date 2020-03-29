@@ -26,7 +26,7 @@ export class LoginComponent extends Component<LoginProperties, LoginState> {
 
     async componentDidMount() {
         const { data } = await axios.get("/api/user") as AxiosResponse<Array<UserIdPair>>;
-        this.setState({...this.state, registeredUsers: data});
+        this.setState({...this.state, registeredUsers: data, chosenUser: data.length > 0 ? data[0].id : ''});
     }
 
     handleLoginSelectChange = (event : ChangeEvent<HTMLSelectElement>) => {

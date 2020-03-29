@@ -1,7 +1,7 @@
 import { Player } from '../../client/src/store/Player';
 import { State } from '../../client/src/store/State';
 
-export type UserIdPair = {
+type UserIdPair = {
     id: string,
     name: string
 };
@@ -26,10 +26,9 @@ export class UserService {
 
     login(state: State, id: string) : State {
         const user = this.lookup(state, id);
-        if (user) {
+        if (user && !this.isLoggedIn(state, id)) {
             var activeUsers = [...state.activeUsers, user];
             state = {...state, activeUsers};
-            console.log('Logged in user=' + id + " state=" + JSON.stringify(state));
         }
         return state;
     }
@@ -62,8 +61,8 @@ export class UserService {
         return ret;
     }
 
-    getActivePlayersDisplay(state: State) : Array<String> {
-        return state.activeUsers.map(u => u.id);
+    isLoggedIn(state: State, loginId: string) : boolean {
+        return state.activeUsers.find(u => u.id === loginId) !== undefined;
     }
 }
 export const theUserService = new UserService();
