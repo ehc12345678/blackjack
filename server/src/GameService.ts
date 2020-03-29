@@ -2,15 +2,17 @@ import { Game } from '../../client/src/store/Game';
 import { Player } from "../../client/src/store/Player";
 import { HandService, theHandService } from "./HandService";
 import { State } from "../../client/src/store/State";
-import { theUserService } from './UserService';
+import { theUserService, UserService } from './UserService';
 
 const CHIPS_PER_DOLLAR = 100;
 
 export class GameService {
     handService: HandService;
+    userService: UserService;
 
     constructor() {
         this.handService = theHandService;
+        this.userService = theUserService;
     }
 
     createGame(state: State) : State {
@@ -18,22 +20,18 @@ export class GameService {
         return this.startGame({...state, currentGame});
     }
 
-    addPlayer(state: State, player: Player) : State {
+    addPlayer(state: State, player: string) : State {
         var { currentGame } = state;
         var players = [...currentGame.players, player];
         currentGame = {...currentGame, players};
         return { ...state, currentGame };
     }
 
-    removePlayer(state: State, player: Player) : State {
+    removePlayer(state: State, player: string) : State {
         var { currentGame } = state;
-        var players = currentGame.players.filter(p => p.id !== player.id);
+        var players = currentGame.players.filter(p => p !== player);
         currentGame = {...currentGame, players};
         return { ...state, currentGame };
-    }
-
-    modifyPlayer(game: Game, player: Player) : Game {
-        return this.handService.modifyPlayer(game, player);
     }
 
     public setCurrentBet(player: Player, currentBet: number) : Player {
@@ -67,12 +65,11 @@ export class GameService {
     }
 
     changeBet(state: State, id: string, bet: number) {
-        var { currentGame } = state;
-        var player = theUserService.lookup(state, id);
+        var player = this.userService.lookup(state, id);
         if (player != null) {
-            currentGame = this.modifyPlayer(currentGame, this.setCurrentBet(player, bet));
+            state = this.userService.modifyPlayer(state, this.setCurrentBet(player, bet));
         }
-        return { ...state, currentGame };
+        return state;
     }
 }
 export const theGameService = new GameService();

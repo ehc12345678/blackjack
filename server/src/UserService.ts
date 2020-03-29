@@ -64,5 +64,15 @@ export class UserService {
     isLoggedIn(state: State, loginId: string) : boolean {
         return state.activeUsers.find(u => u.id === loginId) !== undefined;
     }
+
+    modifyPlayer(state: State, player: Player) {
+        var activeUsers = state.activeUsers.map(p => {
+            if (p.id === player.id) {
+                return player;
+            }
+            return p;
+        });
+        return {...state, activeUsers};
+    }
 }
 export const theUserService = new UserService();

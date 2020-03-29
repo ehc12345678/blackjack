@@ -3,7 +3,7 @@ import { UnknownCard, Card } from '../../client/src/store/Card';
 import { CardService, theCardService } from './CardService';
 import { State } from '../../client/src/store/State';
 import { Player } from '../../client/src/store/Player';
-import { Game } from '../../client/src/store/Game';
+import { UserService, theUserService } from './UserService';
 
 export const DEALER_ID = "dealer";
 export const DEALER = {id: DEALER_ID} as Player;
@@ -11,19 +11,22 @@ export const DEALER = {id: DEALER_ID} as Player;
 const helper = new HandHelper();
 export class HandService {
     cardService: CardService;
+    userService: UserService;
     
     constructor() {
         this.cardService = theCardService;
+        this.userService = theUserService;
     }
 
     startTurn(state: State) : State {
         const playersHands = [];
-        var dealersHand = this.create(DEALER, 0);
+        var dealersHand = this.create(DEALER_ID, 0);
 
         dealersHand = this.addCard(dealersHand, UnknownCard);
         const { currentGame } = state;
-        for (let player of currentGame.players) {
-            var hand = this.create(player, player.currentBet);
+        for (let playerId of currentGame.players) {
+            var player = this.lookupPlayer(state, playerId);
+            var hand = this.create(playerId, player.currentBet);
             hand = this.addCard(hand, this.cardService.nextCard());
             hand = this.addCard(hand, this.cardService.nextCard());
             playersHands.push(hand);
@@ -32,8 +35,8 @@ export class HandService {
         return this.setActiveHand({ ...state, currentGame, playersHands, dealersHand, turnIsGoing: true }, 0);
     }
 
-    create(player: Player, currentBet: number) : Hand {
-        return {player: player.id, bet: currentBet, cards: [], isStaying: false, result: Result.PLAYING};
+    create(playerId: string, currentBet: number) : Hand {
+        return {player: playerId, bet: currentBet, cards: [], isStaying: false, result: Result.PLAYING};
     }
 
     getActiveHand(state: State) : Hand {
@@ -59,12 +62,18 @@ export class HandService {
         const hand = this.getActiveHand(state);
         var newState = state;
         if (hand.cards.length === 2) {
-            newState = this.hitActiveHand(newState);
-            newState = this.stayActiveHand(newState);
+            // double down is to give the active hand a card, double the bet, and stay
+            var newHand = this.addCard(hand, this.cardService.nextCard());
+            console.log('Doubled down hit ' + JSON.stringify(newHand));
 
-            // replace the active hand, by doubling the bet
-            var newHand = {...hand, bet: hand.bet * 2};
+            newHand = {...newHand, bet: newHand.bet * 2};
+            console.log('Doubled down bet ' + JSON.stringify(newHand));
+
             newState = { ...newState, playersHands: this.replace(newState.playersHands, newState.activeHand, newHand) };
+            console.log('Doubled down state ' + JSON.stringify(newState));
+
+            newState = this.stayActiveHand(newState);
+            console.log('Doubled down stay ' + JSON.stringify(newState));
         }
         
         return newState;
@@ -92,6 +101,7 @@ export class HandService {
     }
 
     giveDealerControl(state: State) : State {
+        console.log('Dealer took control');
         var cards = state.dealersHand.cards.filter(card => card !== UnknownCard)
         cards.push( this.cardService.nextCard());
         var dealersHand = {...state.dealersHand, cards};
@@ -121,7 +131,6 @@ export class HandService {
     }
 
     endTurn(state: State) : State {
-        var { currentGame } = state;
         var playersHands = [];
         for (let hand of state.playersHands) {
             hand = this.setResult(hand, this.handResult(hand, state.dealersHand));
@@ -129,20 +138,20 @@ export class HandService {
             var player = this.lookupPlayer(state, hand.player);
             switch (hand.result) {
                 case Result.LOSS:
-                    currentGame = this.modifyPlayer(currentGame, this.removeChips(player, hand.bet));
+                    state = this.userService.modifyPlayer(state, this.removeChips(player, hand.bet));
                     break;
                 case Result.PUSH:
                 default:    
                     break;
                 case Result.WIN:
-                    currentGame = this.modifyPlayer(currentGame, this.addChips(player, hand.bet));
+                    state = this.userService.modifyPlayer(state, this.addChips(player, hand.bet));
                     break;
                 case Result.BLACKJACK:
-                    currentGame = this.modifyPlayer(currentGame, this.addChips(player, hand.bet * 1.5));
+                    state = this.userService.modifyPlayer(state, this.addChips(player, hand.bet * 1.5));
                     break;
             }
         }
-        return {...state, currentGame, playersHands, turnIsGoing: false};
+        return {...state, playersHands, turnIsGoing: false};
     }
 
     handResult(hand: Hand, dealersHand: Hand) : Result {
@@ -211,18 +220,6 @@ export class HandService {
             throw 'Something bad happened, could not find player ' + id;
         }
         return player;
-    }
-    
-    modifyPlayer(game: Game, player: Player) : Game {
-        var players = game.players.map((item) => {
-            if (item.id !== player.id) {
-              // This isn't the item we care about - keep it as-is
-              return item;
-            }
-        
-            return player;
-          });
-        return {...game, players};
     }
 }
 

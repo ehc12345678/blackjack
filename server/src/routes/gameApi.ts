@@ -45,8 +45,8 @@ class GameApi {
 
 	public joinGame(req: Request<PlayerForm>, res: Response<State>) : void {
 		var player = this.userService.lookup(this.getState(), req.body.id) as Player;
-		if (player !== null && !this.getState().currentGame.players.find(player => player.id === req.body.id)) {
-			this.setState(res, (state) => this.gameService.addPlayer(state, player));
+		if (player !== null && !this.getState().currentGame.players.find(playerId => playerId === req.body.id)) {
+			this.setState(res, (state) => this.gameService.addPlayer(state, player.id));
 		} else {
 			res.status(404).end('player not found ' + req.body.id);
 		}

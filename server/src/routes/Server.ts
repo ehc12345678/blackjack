@@ -45,7 +45,6 @@ export class BlackjackServer {
 	public setState(state: State): string {
         this.state = state;
         var strState = JSON.stringify(this.state);
-        console.log('Emitting event ' + strState);
         this.emitter.emit(strState);
 
 		if (this.isDealerInControl(state)) {
