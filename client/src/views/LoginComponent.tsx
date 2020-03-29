@@ -52,7 +52,7 @@ export class LoginComponent extends Component<LoginProperties, LoginState> {
             return (
                 <div className="loginButtonDiv">
                     <select onChange={this.handleLoginSelectChange}>
-                        { this.state.registeredUsers.map(player => <option id={player.id}>{player.name}</option>)}
+                        { this.state.registeredUsers.map(player => <option key={player.id} id={player.id}>{player.name}</option>)}
                     </select>
                     <button onClick={() => this.handleLogin()}>Login</button>
                 </div>

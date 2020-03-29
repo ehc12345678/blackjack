@@ -64,16 +64,9 @@ export class HandService {
         if (hand.cards.length === 2) {
             // double down is to give the active hand a card, double the bet, and stay
             var newHand = this.addCard(hand, this.cardService.nextCard());
-            console.log('Doubled down hit ' + JSON.stringify(newHand));
-
             newHand = {...newHand, bet: newHand.bet * 2};
-            console.log('Doubled down bet ' + JSON.stringify(newHand));
-
             newState = { ...newState, playersHands: this.replace(newState.playersHands, newState.activeHand, newHand) };
-            console.log('Doubled down state ' + JSON.stringify(newState));
-
             newState = this.stayActiveHand(newState);
-            console.log('Doubled down stay ' + JSON.stringify(newState));
         }
         
         return newState;

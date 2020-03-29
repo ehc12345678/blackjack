@@ -14,7 +14,7 @@ type BlackjackProps = {
 
 };
 
-const host = process.env.NODE_ENV === 'production' ? window.location.host : '192.168.0.199';
+const host = window.location.host.substring(0, window.location.host.indexOf(':'));
 
 type BlackjackState = {
     readonly currentGame: Game;
@@ -67,8 +67,8 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
         axios.post("/api/game/join", {id: loginId});
     }
 
-    isLoggedInPlayer(player: Player) {
-        return player.id === this.state.currentUser?.id;
+    isLoggedInPlayer(player: string) {
+        return player === this.state.currentUser?.id;
     }
 
     handleCreateGame() {
@@ -116,9 +116,17 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
         axios.get("/api/activeHand/doubleDown");
     }
 
-    getHandsForPlayer(player: Player) : Array<Hand> {
-        var hands = this.state.playersHands.filter(h => h.player === player.id);
+    getHandsForPlayer(player: string) : Array<Hand> {
+        var hands = this.state.playersHands.filter(h => h.player === player);
         return hands;
+    }
+
+    getPlayer(playerId: string) : Player {
+        var player = this.state.activeUsers.find(p => playerId === p.id);
+        if (player) {
+            return player;
+        }
+        throw "Could not find player " + playerId;
     }
 
     getLoginComponent() {
@@ -141,13 +149,13 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
                     <table>
                         <tbody>
                         <tr>
-                            {this.state.currentGame.players.map((value) => {
+                            {this.state.currentGame.players.map((playerId) => {
                                 return <td>
-                                    <PlayerComponent player={value}
-                                        hands={this.getHandsForPlayer(value)}
+                                    <PlayerComponent player={this.getPlayer(playerId)}
+                                        hands={this.getHandsForPlayer(playerId)}
                                         activeHand={this.getActiveHand()}
                                         canChangeBet={!this.state.turnIsGoing}
-                                        isLoggedInPlayer={this.isLoggedInPlayer(value)}
+                                        isLoggedInPlayer={this.isLoggedInPlayer(playerId)}
                                         onHit={() => this.onHit()}
                                         onStay={() => this.onStay()}
                                         onChangeBet={(player, bet) => this.onChangeBet(player, bet)}
