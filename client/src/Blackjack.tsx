@@ -14,6 +14,8 @@ type BlackjackProps = {
 
 };
 
+const host = process.env.NODE_ENV === 'production' ? window.location.host : '192.168.0.199';
+
 type BlackjackState = {
     readonly currentGame: Game;
     readonly playersHands: Array<Hand>;
@@ -30,7 +32,7 @@ export class Blackjack extends Component<BlackjackProps, BlackjackState> {
     constructor(props: BlackjackProps) {
         super(props);
         this.state = { ...defaultState, currentUser: null } as BlackjackState;
-        this.webSocketClient = new W3CWebSocket("ws://localhost:10116");
+        this.webSocketClient = new W3CWebSocket("ws://" + host + ":" + 10116);
     }
 
     private setServerState(state: State) {

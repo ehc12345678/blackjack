@@ -5,6 +5,8 @@ import activeHandRouter from './activeHandApi';
 import dealerRouter from './dealerApi';
 import gameRouter from './gameApi';
 import userRouter from './userApi';
+import { HandHelper } from '../../../client/src/store/Hand';
+import { theHandService } from '../HandService';
 
 export class BlackjackEmitter {
     listeners: Array<WebSocket>;
@@ -18,6 +20,7 @@ export class BlackjackEmitter {
     }
 }
 
+const handHelper = new HandHelper();
 export class BlackjackServer {
     state: State;
     emitter: BlackjackEmitter;
@@ -44,7 +47,29 @@ export class BlackjackServer {
         var strState = JSON.stringify(this.state);
         console.log('Emitting event ' + strState);
         this.emitter.emit(strState);
+
+		if (this.isDealerInControl(state)) {
+			this.doDealer(state);
+		}
 		return strState;
+    }
+
+
+	doDealer(state: State) {
+        setTimeout(() => {
+            var newState = state;        
+            if (this.isDealerInControl(state) && handHelper.bestTotal(state.dealersHand) < 17) {
+                newState = theHandService.dealerTakesCard(newState);
+                this.doDealer(newState);
+            } else {
+                newState = theHandService.endTurn(state);
+            }
+            this.setState(newState);
+        }, 500);
+    }
+
+    isDealerInControl(state: State): boolean {
+		return state.turnIsGoing && state.activeHand >= state.playersHands.length && !handHelper.isDone(state.dealersHand);
     }
 }
 
