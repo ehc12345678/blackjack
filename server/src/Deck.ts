@@ -1,4 +1,4 @@
-import { Card, Suit } from "../Card";
+import { Card, Suit } from '../../client/src/store/Card';
 
 function getRandomInt(max: number) {
     return Math.floor(Math.random() * Math.floor(max));

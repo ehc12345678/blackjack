@@ -1,5 +1,5 @@
 import { Deck } from "./Deck";
-import { Card } from "../Card";
+import { Card } from "../../client/src/store/Card";
 
 export class DeckShoe extends Deck {
     cardOnTop = 0;

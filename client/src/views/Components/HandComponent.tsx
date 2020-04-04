@@ -1,30 +1,32 @@
 import React, { Component } from "react";
 import { CardComponent } from "./CardComponent";
-import { Hand } from "../../store/Hand";
-import { Result } from "../../store/HandService";
+import { Hand, Result, HandHelper } from "../../store/Hand";
 
 type HandProperties = {
     hand: Hand,                                                                                                                                                                                                                                                                                                                                                                                             
     isActive: boolean,
     isDealer: boolean,
+    isLoggedInUser: boolean,
     onHit: () => void,
     onStay: () => void,
-    onSplit: () => void
+    onSplit: () => void,
+    onDoubleDown: () => void
 };
 
+const helper = new HandHelper();
 export class HandComponent extends Component<HandProperties> {
     getHandTotal() {
         const { hand } = this.props;
-        if (hand.isBlackjack()) {
+        if (helper.isBlackjack(hand)) {
             return <span className="blackjack">Blackjack</span>;
         }
-        if (hand.isBusted()) {
+        if (helper.isBusted(hand)) {
             return <span className="busted">Busted</span>;
         }
-        const lowest = hand.lowestTotal();
-        const highest = hand.highestTotal();
-        if (lowest > 0 && (hand.isStaying() || lowest === highest)) {
-            return <b>{hand.bestTotal()}</b>;
+        const lowest = helper.lowestTotal(hand);
+        const highest = helper.highestTotal(hand);
+        if (lowest > 0 && (hand.isStaying || lowest === highest)) {
+            return <b>{helper.bestTotal(hand)}</b>;
         }
         if (lowest > 0) {
             return <span><b>{lowest}</b> or <b>{highest}</b></span>
@@ -32,32 +34,38 @@ export class HandComponent extends Component<HandProperties> {
     }
 
     canHit() : boolean {
-        return !(this.props.hand.isDone());
+        return !(helper.isDone(this.props.hand));
     }
 
     canStay() : boolean {
-        return !(this.props.hand.isDone());
+        return this.canHit();
     }
    
     getBet() {
-        if (this.props.hand.bet() > 0) {
-            return <div className="handBet">Bet: ${this.props.hand.bet()}</div>;
+        if (this.props.hand.bet > 0) {
+            return <div className="handBet">Bet: ${this.props.hand.bet}</div>;
         }
     }
 
     getHandResult() {
-        if (this.props.hand.result() !== Result.PLAYING) {
-            return <div className="handResult">{this.props.hand.result()}</div>
+        if (this.props.hand.result !== Result.PLAYING) {
+            return <div className="handResult">{this.props.hand.result}</div>
         }
     }
 
     buttonsShouldBeVisible() : boolean {
-        return !this.props.isDealer && this.props.isActive && this.props.hand.result() === Result.PLAYING;
+        return !this.props.isDealer && this.props.isLoggedInUser && this.props.isActive && this.props.hand.result === Result.PLAYING;
     }
 
     getSplitButton() {
-        if (this.props.hand.canSplit() && this.buttonsShouldBeVisible()) {
+        if (helper.canSplit(this.props.hand) && this.buttonsShouldBeVisible()) {
             return <button onClick={() => this.props.onSplit()}>Split</button>
+        }
+    }
+
+    getDoubleDownButton() {
+        if (helper.canDoubleDown(this.props.hand) && this.buttonsShouldBeVisible()) {
+            return <button onClick={() => this.props.onDoubleDown()}>Double Down</button>
         }
     }
 
@@ -68,7 +76,7 @@ export class HandComponent extends Component<HandProperties> {
             <div className={"hand" + active}>
                 <div className={"handTotal" + active}>{this.getHandTotal()}</div>
                 {this.getBet()}
-                {this.props.hand.cards().map((card) => {
+                {this.props.hand.cards.map((card) => {
                     return <CardComponent card={card}/>
                 })}
                 <div className="handButtons">
@@ -81,6 +89,7 @@ export class HandComponent extends Component<HandProperties> {
                         disabled={!this.canStay()}
                         onClick={() => this.props.onStay()}>Stay</button>
                     { this.getSplitButton() }    
+                    { this.getDoubleDownButton() }
                 </div> 
                 {this.getHandResult()}
             </div>
