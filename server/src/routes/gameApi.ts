@@ -1,10 +1,10 @@
 import { server } from '../index';
 import { Router } from 'express';
 import { Request, Response } from 'express';
-import { State } from '../../../client/src/store/State';
+import { State } from '../store';
 import { GameService, theGameService } from '../GameService';
 import { UserService, theUserService } from '../UserService';
-import { Player } from '../../../client/src/store/Player';
+import { Player } from '../store';
 
 var express = require('express');
 

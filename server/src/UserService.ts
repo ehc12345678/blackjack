@@ -1,5 +1,5 @@
-import { Player } from '../../client/src/store/Player';
-import { State } from '../../client/src/store/State';
+import { Player } from './store';
+import { State } from './store';
 
 type UserIdPair = {
   id: string;

@@ -38,7 +38,6 @@ export default class Auth {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
         this.history.push('/');
-        this.getProfile(this.onAuth);
         const redirectLocation =
           localStorage.getItem(REDIRECT_ON_LOGIN) === 'undefined'
             ? '/'
@@ -63,6 +62,7 @@ export default class Auth {
     _accessToken = authResult.accessToken;
     _idToken = authResult.idToken;
     this.scheduleTokenRenewal();
+    this.getProfile(this.onAuth);
   };
 
   logout = () => {
@@ -110,7 +110,6 @@ export default class Auth {
         console.log(`Error: ${err.error} - ${err.error_description}.`);
       } else {
         this.setSession(result);
-        this.handleAuthentication();
       }
       if (cb) {
         cb(err, result);

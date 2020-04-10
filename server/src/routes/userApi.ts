@@ -3,7 +3,7 @@ var checkScope = require('express-jwt-authz');
 
 import { server, checkJwt } from '../index';
 import { UserService, theUserService } from '../UserService';
-import { State } from '../../../client/src/store/State';
+import { State } from '../store';
 
 var express = require('express');
 

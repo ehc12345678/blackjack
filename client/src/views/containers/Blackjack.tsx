@@ -5,11 +5,11 @@ import axios, { AxiosResponse } from 'axios';
 
 import { PlayerComponent } from '../Components/PlayerComponent';
 import { HandComponent } from '../Components/HandComponent';
-import { Hand } from '../../store/Hand';
-import { Player } from '../../store/Player';
+import { Hand } from '../../store';
+import { Player } from '../../store';
 import { LoginComponent } from '../LoginComponent';
 import Nav from '../Components/Nav';
-import { State } from '../../store/State';
+import { State } from '../../store';
 import { AppState } from '../../App';
 import AuthContext from '../../auth/AuthContext';
 import Auth from '../../auth/Auth';

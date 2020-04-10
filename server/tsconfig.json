@@ -13,25 +13,12 @@
     "target": "es6",
     "moduleResolution": "node",
     "paths": {
-      "@client/*": [
-        "../client/src/store"
-      ],
-      "@server": [
-        "src"
-      ]
+      "@shared/*": ["../client/src/store"],
+      "@server": ["src"]
     },
-    "types": [
-      "node"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src/**/*.ts",
-    "../client/src/store/*.ts"
-  ],
-  "exclude": [
-    "src/public/"
-  ]
+  "include": ["**/*.ts", "@shared/**/*.ts"],
+  "exclude": ["src/public/"]
 }

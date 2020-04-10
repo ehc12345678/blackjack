@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Auth from '../../auth/Auth';
-import { Player } from '../../store/Player';
+import { Player } from '../../store';
 import Nav from './Nav';
 
 interface AllUsersProps {

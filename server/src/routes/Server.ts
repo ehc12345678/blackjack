@@ -1,11 +1,11 @@
-import { State, defaultState } from '../../../client/src/store/State';
+import { State, defaultState } from '../store';
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import activeHandRouter from './activeHandApi';
 import dealerRouter from './dealerApi';
 import gameRouter from './gameApi';
 import userRouter from './userApi';
-import { HandHelper } from '../../../client/src/store/Hand';
+import { HandHelper } from '../store';
 import { theHandService } from '../HandService';
 import { checkJwt } from '..';
 

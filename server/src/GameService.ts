@@ -1,7 +1,6 @@
-import { Game } from '../../client/src/store/Game';
-import { Player } from '../../client/src/store/Player';
+import { Player } from './store';
 import { HandService, theHandService } from './HandService';
-import { State } from '../../client/src/store/State';
+import { State } from './store';
 import { theUserService, UserService } from './UserService';
 
 const CHIPS_PER_DOLLAR = 100;
