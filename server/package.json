@@ -7,14 +7,18 @@
     "start:dev": "nodemon --config nodemon.json"
   },
   "dependencies": {
+    "@types/express-jwt": "0.0.42",
     "@types/ws": "^7.2.3",
     "command-line-args": "^5.1.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "express-jwt": "^5.3.1",
+    "express-jwt-authz": "^2.3.1",
     "helmet": "^3.22.0",
     "http-status-codes": "^1.4.0",
+    "jwks-rsa": "^1.7.0",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
     "winston": "^3.2.1",

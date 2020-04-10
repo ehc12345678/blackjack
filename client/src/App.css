@@ -1,47 +1,60 @@
-.App {
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.body {
+  margin: 15px;
+}
+
+h1,
+h2,
+h3 {
+  color: #f0582a;
+}
+
+button {
+  margin: 5px;
+}
+
+ul.unstyled {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom right, #f0582a, #eb0685);
+}
+
+nav li {
+  float: left;
+}
+
+nav li a {
+  display: block;
+  color: white;
   text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+nav li a:hover {
+  background-color: #d9390d;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-float infinite 3s ease-in-out;
-  }
-}
-
-.App-header {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-}
-
-.App-link {
-  color: rgb(112, 76, 182);
-}
-
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px)
-  }
-  100% {
-    transform: translateY(0px)
-  }
+nav button {
+  margin-top: 13px;
 }
 
 .gameNextTurn {
   text-align: center;
 }
-
 
 .player {
   border-style: solid;
@@ -57,7 +70,9 @@
   font-weight: bold;
 }
 
-.playerChips, .playerCash, .playerBetForm {
+.playerChips,
+.playerCash,
+.playerBetForm {
   display: inline;
   margin-left: 10px;
 }
@@ -81,7 +96,7 @@
 }
 
 .handTotal {
-    text-align: center;
+  text-align: center;
 }
 
 .handTotalActive {
@@ -90,26 +105,26 @@
 }
 
 .handButtons {
-    height: 30px;
-    text-align: center;
+  height: 30px;
+  text-align: center;
 }
 
 .handBet {
-    text-align: left;
-    margin-left: 20px;
+  text-align: left;
+  margin-left: 20px;
 }
 
 .handResult {
-    text-align: center;
+  text-align: center;
 }
 
 button.handButtonActive {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 button.handButton {
-    margin-top: 10px;
-    visibility: hidden;
+  margin-top: 10px;
+  visibility: hidden;
 }
 
 .card {
@@ -121,13 +136,13 @@ button.handButton {
 .blackjack {
   font-weight: bold;
   font-size: 12pt;
-  color: green;  
+  color: green;
 }
 
 .busted {
   font-weight: bold;
   font-size: 12pt;
-  color: red;  
+  color: red;
 }
 
 img {

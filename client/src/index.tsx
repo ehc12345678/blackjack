@@ -1,16 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { Blackjack } from './Blackjack';
-import { store } from './app/store';
-import { Provider } from 'react-redux';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import { store } from "./app/store";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import * as serviceWorker from "./serviceWorker";
+import App from "./App";
 
 ReactDOM.render(
   <Provider store={store}>
-    <Blackjack/>
+    <div className="body">
+      <Router>
+        <Route component={App} />
+      </Router>
+    </div>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
