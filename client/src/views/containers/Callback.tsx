@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import Auth from '../../auth/Auth';
 
 interface CallbackProps {
@@ -6,21 +6,16 @@ interface CallbackProps {
   location: Location | null | undefined;
 }
 
-class Callback extends Component<CallbackProps> {
-  componentDidMount() {
+const Callback = ({ auth, location }: CallbackProps) => {
+  useEffect(() => {
     // handle auth if expected values in the URL
-    if (
-      this.props.location &&
-      /access_token|id_token|error/.test(this.props.location.hash)
-    ) {
-      this.props.auth.handleAuthentication();
+    if (location && /access_token|id_token|error/.test(location.hash)) {
+      auth.handleAuthentication();
     } else {
       throw new Error('Invalid callback URL.');
     }
-  }
-  render() {
-    return <h1>Loading...</h1>;
-  }
+  }, [auth, location]);
+  return <h1>Loading...</h1>;
 }
 
 export default Callback;

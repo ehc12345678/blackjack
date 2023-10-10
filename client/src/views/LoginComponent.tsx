@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 
 import axios, { AxiosResponse } from 'axios';
 
@@ -18,57 +18,58 @@ type UserIdPair = {
     name: string
 };
 
-export class LoginComponent extends Component<LoginProperties, LoginState> {
-    constructor(props: LoginProperties) {
-        super(props);
-        this.state = { registeredUsers: [], chosenUser: '', registerName: '' };
-    }
+export const LoginComponent = ({ onLogin, onRegister }: LoginProperties) => {
+    const [registeredUsers, setRegisteredUsers] = useState<Array<UserIdPair>>([]);
+    const [chosenUser, setChosenUser] = useState<string | null>(null);
+    const [registerName, setRegisterName] = useState<string | null>(null);
 
-    async componentDidMount() {
-        const { data } = await axios.get("/api/user") as AxiosResponse<Array<UserIdPair>>;
-        this.setState({...this.state, registeredUsers: data, chosenUser: data.length > 0 ? data[0].id : ''});
-    }
+    useEffect(() => {
+        const getUsers = async () => {
+            const { data } = await axios.get("/api/user") as AxiosResponse<Array<UserIdPair>>;
+            setRegisteredUsers(data);
+            setChosenUser(data.length > 0 ? data[0].id : '');
+        };
+        getUsers()
+    }, []);
 
-    handleLoginSelectChange = (event : ChangeEvent<HTMLSelectElement>) => {
-        this.setState({...this.state, chosenUser: event.target.value});
+    const handleLoginSelectChange = (event : ChangeEvent<HTMLSelectElement>) => {
+        setChosenUser(event.target.value);
     };
 
-    handleRegisterNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        this.setState({...this.state, registerName: event.target.value})
+    const handleRegisterNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setRegisterName(event.target.value);
     };
 
-    handleLogin() {
-        this.props.onLogin(this.state.chosenUser);
+    const handleLogin = () => {
+        onLogin(chosenUser || '');
     }
 
-    handleRegister() {
-        if (this.state.registerName.length > 0) {
-            this.props.onRegister(this.state.registerName);
+    const handleRegister = () => {
+        if (registerName?.length && registerName?.length > 0) {
+            onRegister(registerName);
         }
     }
 
-    getLoginButtonControls() {
-        if (this.state.registeredUsers.length > 0) {
+    const getLoginButtonControls = () => {
+        if (registeredUsers.length > 0) {
             return (
                 <div className="loginButtonDiv">
-                    <select onChange={this.handleLoginSelectChange}>
-                        { this.state.registeredUsers.map(player => <option key={player.id} id={player.id}>{player.name}</option>)}
+                    <select onChange={handleLoginSelectChange}>
+                        { registeredUsers.map(player => <option key={player.id} id={player.id}>{player.name}</option>)}
                     </select>
-                    <button onClick={() => this.handleLogin()}>Login</button>
+                    <button onClick={() => handleLogin()}>Login</button>
                 </div>
             );
         }
     }
 
-    render() {
-        return (
-            <div className="loginForm">
-                {this.getLoginButtonControls()}
-                <div className="registerButtonDiv">
-                    <input type="text" onChange={this.handleRegisterNameChange} value={this.state.registerName}/>
-                    <button onClick={() => this.handleRegister()}>Register</button>
-                </div>
+    return (
+        <div className="loginForm">
+            {getLoginButtonControls()}
+            <div className="registerButtonDiv">
+                <input type="text" onChange={handleRegisterNameChange} value={registerName || ""}/>
+                <button onClick={() => handleRegister()}>Register</button>
             </div>
-        )
-    }
+        </div>
+    )
 }

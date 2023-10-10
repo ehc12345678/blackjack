@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { Blackjack } from './views/containers/Blackjack';
-import ProfileComponent from './views/containers/ProfileComponent';
 import Auth from './auth/Auth';
-import Callback from './views/containers/Callback';
 import { State, defaultState } from './store';
 import { Player } from './store';
 import { w3cwebsocket as W3CWebSocket, IMessageEvent } from 'websocket';
 import axios, { AxiosResponse } from 'axios';
-import AllUsers from './views/Components/AllUsers';
-import { PrivateRoute } from './views/Components/PrivateRoute';
-import AuthContext from './auth/AuthContext';
+import AppContainer from './views/containers/AppContainer';
 
 const host = window.location.host.substring(
   0,
@@ -108,37 +102,13 @@ class App extends Component<AppProps, AppState> {
   }
 
   render() {
-    const { auth } = this.state;
-    if (!this.state.tokenRenewalComplete) return 'Loading...';
     return (
-      <AuthContext.Provider value={auth}>
-        <div className="body">
-          <Route
-            path="/"
-            exact
-            render={(props) => (
-              <Blackjack
-                state={this.state}
-                auth={auth}
-                setServerState={this.setServerState}
-                {...props}
-              />
-            )}
-          />
-          <Route
-            path="/callback"
-            render={(props) => (
-              <Callback auth={auth} location={this.props.location} />
-            )}
-          />
-          <PrivateRoute path="/profile" component={ProfileComponent} />
-          <PrivateRoute
-            path="/users"
-            component={AllUsers}
-            scopes={['read:users']}
-          />
-        </div>
-      </AuthContext.Provider>
+      <AppContainer 
+        auth={this.state.auth} 
+        tokenRenewalComplete={this.state.tokenRenewalComplete} 
+        state={this.state} 
+        location={this.props.location}        
+      />
     );
   }
 }

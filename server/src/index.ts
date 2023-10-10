@@ -90,7 +90,7 @@ export function checkRole(role: string) {
 //   res.render('error');
 // });
 
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 5050;
 
 app.listen(port, function () {
   console.log('Black jack server listening on port ' + port + '!');

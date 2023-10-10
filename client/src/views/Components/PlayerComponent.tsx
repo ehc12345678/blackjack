@@ -1,6 +1,6 @@
 import { Hand } from '../../store';
 import { Player } from '../../store';
-import React, { Component, ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { HandComponent } from './HandComponent';
 
 export type PlayerProperties = {
@@ -21,57 +21,45 @@ type PlayerState = {
   bet: number;
 };
 
-export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
-  toggleBetVisiblity: (event: any) => void;
-  onSetBet: (event: any) => void;
-  onBetValueChange: (event: any) => void;
+export const PlayerComponent = (props: PlayerProperties) => {
+  const [changeBetVisible, setChangeBetVisible] = useState<boolean>(false);
+  const [bet, setBet] = useState<number>(props.player.currentBet);
+  const [tempBet, setTempBet] = useState<number>(bet);
 
-  constructor(props: PlayerProperties) {
-    super(props);
-    this.state = { changeBetVisible: false, bet: props.player.currentBet };
-    this.toggleBetVisiblity = this.handleToggleBetVisibility.bind(this);
-    this.onSetBet = this.handleSetBet.bind(this);
-    this.onBetValueChange = this.handleBetValueChange.bind(this);
+  const handleToggleBetVisibility = () => {
+    setChangeBetVisible(!changeBetVisible);
   }
 
-  handleToggleBetVisibility() {
-    this.setState({ changeBetVisible: !this.state.changeBetVisible });
+  const handleBetValueChange = (newBet: number) => {
+    setBet(newBet);
+    props.onChangeBet(props.player, newBet);
+    handleToggleBetVisibility()
   }
 
-  handleSetBet() {
-    this.props.onChangeBet(this.props.player, this.state.bet);
-    this.handleToggleBetVisibility();
-  }
-
-  handleBetValueChange(event: ChangeEvent<HTMLInputElement>) {
-    var bet = +event.target.value;
-    this.setState({ ...this.state, bet });
-  }
-
-  getBetControls() {
+  const getBetControls = (props : PlayerProperties) => {
     var changeControlsForm;
     var changeBetButton;
-    if (this.state.changeBetVisible && this.props.isLoggedInPlayer) {
+    if (changeBetVisible && props.isLoggedInPlayer) {
       changeControlsForm = (
         <div className="playerBetForm">
           <input
             type="text"
-            value={this.state.bet}
-            onChange={this.onBetValueChange}
+            value={tempBet}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setTempBet(+event.target?.value)}
           />
-          <button onClick={this.onSetBet}>OK</button>
-          <button onClick={this.toggleBetVisiblity}>Cancel</button>
+          <button onClick={() => handleBetValueChange(tempBet)}>OK</button>
+          <button onClick={handleToggleBetVisibility}>Cancel</button>
         </div>
       );
     }
 
-    if (this.props.canChangeBet && this.props.isLoggedInPlayer) {
+    if (props.canChangeBet && props.isLoggedInPlayer) {
       changeBetButton = (
-        <button onClick={this.toggleBetVisiblity}>Change Bet</button>
+        <button onClick={handleToggleBetVisibility}>Change Bet</button>
       );
       return (
         <div className="playerBet">
-          Current Bet: ${this.state.bet}
+          Current Bet: ${bet}
           {changeBetButton}
           {changeControlsForm}
         </div>
@@ -79,32 +67,31 @@ export class PlayerComponent extends Component<PlayerProperties, PlayerState> {
     }
   }
 
-  render() {
-    return (
-      <div className="player">
-        <div className="playerName">{this.props.player.name}</div>
-        <div className="playerChips">
-          Chips: {this.props.player.chipBalance}
-        </div>
-        <div className="playerCash">Cash: {this.props.player.cashBalance}</div>
-        {this.getBetControls()}
-        <div className="hands">
-          {this.props.hands.map((value) => {
-            return (
-              <HandComponent
-                hand={value}
-                isActive={this.props.activeHand === value}
-                isLoggedInUser={this.props.isLoggedInPlayer}
-                onHit={this.props.onHit}
-                onStay={this.props.onStay}
-                onSplit={this.props.onSplit}
-                onDoubleDown={this.props.onDoubleDown}
-                isDealer={false}
-              />
-            );
-          })}
-        </div>
+  return (
+    <div className="player">
+      <div className="playerName">{props.player.name}</div>
+      <div className="playerChips">
+        Chips: {props.player.chipBalance}
       </div>
-    );
-  }
+      <div className="playerCash">Cash: {props.player.cashBalance}</div>
+      {getBetControls(props)}
+      <div className="hands">
+        {props.hands.map((value, index) => {
+          return (
+            <HandComponent
+              hand={value}
+              isActive={props.activeHand === value}
+              isLoggedInUser={props.isLoggedInPlayer}
+              onHit={props.onHit}
+              onStay={props.onStay}
+              onSplit={props.onSplit}
+              onDoubleDown={props.onDoubleDown}
+              isDealer={false}
+              key={"hand"+index}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
 }

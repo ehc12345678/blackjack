@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Card, Suit, UnknownCard } from '../../store';
 
 type CardProperties = {
   card: Card;
 };
 
-export class CardComponent extends Component<CardProperties> {
-  private cardValueToStr(value: number): string {
+export const CardComponent = ({ card }: CardProperties) => {
+  const cardValueToStr = (value: number): string => {
     switch (value) {
       case 1:
         return 'A';
@@ -20,43 +20,41 @@ export class CardComponent extends Component<CardProperties> {
         return 'K';
     }
     return value.toString();
-  }
+  };
 
-  private cardSuitToStr(suit: Suit): string {
+  const cardSuitToStr = (suit: Suit): string => {
     return suit.toString();
   }
 
-  private imagePath(card: Card): string {
-    if (this.isUnknown(card)) {
+  const imagePath = (card: Card): string => {
+    if (isUnknown(card)) {
       return '/cards/Unknown.jpg';
     }
     return (
       '/cards/' +
-      this.cardValueToStr(card.value) +
-      this.cardSuitToStr(card.suit) +
+      cardValueToStr(card.value) +
+      cardSuitToStr(card.suit) +
       '.jpg'
     );
   }
 
-  private altText(card: Card): string {
-    if (this.isUnknown(card)) {
+  const altText = (card: Card): string => {
+    if (isUnknown(card)) {
       return 'Unknown';
     }
-    return this.cardValueToStr(card.value) + this.cardSuitToStr(card.suit);
+    return cardValueToStr(card.value) + cardSuitToStr(card.suit);
   }
 
-  private isUnknown(card: Card): boolean {
+  const isUnknown = (card: Card): boolean => {
     return card.value === UnknownCard.value && card.suit === UnknownCard.suit;
   }
 
-  render() {
-    return (
-      <div className="card">
-        <img
-          src={this.imagePath(this.props.card)}
-          alt={this.altText(this.props.card)}
-        ></img>
-      </div>
-    );
-  }
+  return (
+    <div className="card">
+      <img
+        src={imagePath(card)}
+        alt={altText(card)}
+      ></img>
+    </div>
+  );
 }

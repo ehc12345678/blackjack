@@ -9,7 +9,6 @@ import { Hand } from '../../store';
 import { Player } from '../../store';
 import { LoginComponent } from '../LoginComponent';
 import Nav from '../Components/Nav';
-import { State } from '../../store';
 import { AppState } from '../../App';
 import AuthContext from '../../auth/AuthContext';
 import Auth from '../../auth/Auth';
@@ -17,7 +16,6 @@ import Auth from '../../auth/Auth';
 interface BlackjackProps {
   readonly state: AppState;
   auth: Auth;
-  setServerState: (state: State) => void;
 }
 
 export class Blackjack extends Component<BlackjackProps> {
@@ -130,9 +128,9 @@ export class Blackjack extends Component<BlackjackProps> {
             <table>
               <tbody>
                 <tr>
-                  {this.props.state.currentGame.players.map((playerId) => {
+                  {this.props.state.currentGame.players.map((playerId, index) => {
                     return (
-                      <td>
+                      <td key={"player" +index}>
                         <PlayerComponent
                           player={this.getPlayer(playerId)}
                           hands={this.getHandsForPlayer(playerId)}
@@ -176,6 +174,7 @@ export class Blackjack extends Component<BlackjackProps> {
                               onSplit={() => this.onSplit()}
                               onDoubleDown={() => this.onDoubleDown()}
                               isDealer={true}
+                              key="dealer"
                             />
                           </td>
                         </tr>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { CardComponent } from './CardComponent';
 import { Hand, Result, HandHelper } from '../../store';
 
@@ -13,10 +13,11 @@ type HandProperties = {
   onDoubleDown: () => void;
 };
 
-const helper = new HandHelper();
-export class HandComponent extends Component<HandProperties> {
-  getHandTotal() {
-    const { hand } = this.props;
+export const HandComponent = (props: HandProperties) => {
+  const { hand } = props;
+  const helper = new HandHelper();
+
+  const getHandTotal = (hand: Hand) => {
     if (helper.isBlackjack(hand)) {
       return <span className="blackjack">Blackjack</span>;
     }
@@ -37,82 +38,82 @@ export class HandComponent extends Component<HandProperties> {
     }
   }
 
-  canHit(): boolean {
-    return !helper.isDone(this.props.hand);
+  const canHit = (hand: Hand) : boolean => {
+    return !helper.isDone(hand);
   }
 
-  canStay(): boolean {
-    return this.canHit();
+  const canStay = (hand: Hand) : boolean => {
+    return canHit(hand);
   }
 
-  getBet() {
-    if (this.props.hand.bet > 0) {
-      return <div className="handBet">Bet: ${this.props.hand.bet}</div>;
+  const getBet = ({ bet }: Hand) => {
+    if (bet > 0) {
+      return <div className="handBet">Bet: ${bet}</div>;
     }
   }
 
-  getHandResult() {
-    if (this.props.hand.result !== Result.PLAYING) {
-      return <div className="handResult">{this.props.hand.result}</div>;
+  const getHandResult = ({ result }: Hand) => {
+    if (result !== Result.PLAYING) {
+      return <div className="handResult">{result}</div>;
     }
   }
 
-  buttonsShouldBeVisible(): boolean {
+  const buttonsShouldBeVisible = ({isDealer, isLoggedInUser, isActive, hand}: HandProperties) : boolean => {
     return (
-      !this.props.isDealer &&
-      this.props.isLoggedInUser &&
-      this.props.isActive &&
-      this.props.hand.result === Result.PLAYING
+      !isDealer &&
+      isLoggedInUser &&
+      isActive &&
+      hand.result === Result.PLAYING
     );
   }
 
-  getSplitButton() {
-    if (helper.canSplit(this.props.hand) && this.buttonsShouldBeVisible()) {
-      return <button onClick={() => this.props.onSplit()}>Split</button>;
+  const getSplitButton = (props: HandProperties)  => {
+    const { hand, onSplit } = props;
+    if (helper.canSplit(hand) && buttonsShouldBeVisible(props)) {
+      return <button onClick={() => onSplit()}>Split</button>;
     }
   }
 
-  getDoubleDownButton() {
+  const getDoubleDownButton = (props: HandProperties) => {
     if (
-      helper.canDoubleDown(this.props.hand) &&
-      this.buttonsShouldBeVisible()
+      helper.canDoubleDown(props.hand) &&
+      buttonsShouldBeVisible(props)
     ) {
       return (
-        <button onClick={() => this.props.onDoubleDown()}>Double Down</button>
+        <button onClick={props.onDoubleDown}>Double Down</button>
       );
     }
   }
 
-  render() {
-    var active = this.props.isActive ? 'Active' : '';
-    var btnActive = this.buttonsShouldBeVisible() ? 'Active' : '';
-    return (
+  var active = props.isActive ? 'Active' : '';
+  var btnActive = buttonsShouldBeVisible(props) ? 'Active' : '';
+  return (
       <div className={'hand' + active}>
-        <div className={'handTotal' + active}>{this.getHandTotal()}</div>
-        {this.getBet()}
-        {this.props.hand.cards.map((card) => {
-          return <CardComponent card={card} />;
+        <div className={'handTotal' + active}>{getHandTotal(hand)}</div>
+        {getBet(hand)}
+        {hand.cards.map((card, index) => {
+          return <CardComponent card={card} key={"card" + index}/>;
         })}
         <div className="handButtons">
           <button
             className={'handButton' + btnActive}
-            disabled={!this.canHit()}
-            onClick={() => this.props.onHit()}
+            disabled={!canHit(hand)}
+            onClick={() => props.onHit()}
           >
             Hit
           </button>
           <button
             className={'handButton' + btnActive}
-            disabled={!this.canStay()}
-            onClick={() => this.props.onStay()}
+            disabled={!canStay(hand)}
+            onClick={() => props.onStay()}
           >
             Stay
           </button>
-          {this.getSplitButton()}
-          {this.getDoubleDownButton()}
+          {getSplitButton(props)}
+          {getDoubleDownButton(props)}
         </div>
-        {this.getHandResult()}
+        {getHandResult(hand)}
       </div>
     );
-  }
-}
+};
+
