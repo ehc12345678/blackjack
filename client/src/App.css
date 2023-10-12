@@ -52,6 +52,27 @@ nav button {
   margin-top: 13px;
 }
 
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+.playersContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.dealerContainer {
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+}
+
+.nextTurnContainer {
+  text-align: left;
+}
+
 .gameNextTurn {
   text-align: center;
 }
@@ -91,8 +112,20 @@ nav button {
 }
 
 .hand {
-  display: inline-block;
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.handTotalBet {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cardsContainer {
+  display: flxe;
+  flex-direction: row;
 }
 
 .handTotal {
@@ -105,26 +138,20 @@ nav button {
 }
 
 .handButtons {
-  height: 30px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .handBet {
-  text-align: left;
-  margin-left: 20px;
+  align-self: center;
 }
 
 .handResult {
   text-align: center;
 }
 
-button.handButtonActive {
-  margin-top: 10px;
-}
-
 button.handButton {
   margin-top: 10px;
-  visibility: hidden;
 }
 
 .card {

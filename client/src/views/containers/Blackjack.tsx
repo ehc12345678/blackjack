@@ -124,68 +124,48 @@ export class Blackjack extends Component<BlackjackProps> {
         <div>
           <Nav auth={auth} />
           <h2>Game</h2>
-          <div>
-            <table>
-              <tbody>
-                <tr>
-                  {this.props.state.currentGame.players.map((playerId, index) => {
-                    return (
-                      <td key={"player" +index}>
-                        <PlayerComponent
-                          player={this.getPlayer(playerId)}
-                          hands={this.getHandsForPlayer(playerId)}
-                          activeHand={this.getActiveHand()}
-                          canChangeBet={!this.props.state.turnIsGoing}
-                          isLoggedInPlayer={this.isLoggedInPlayer(playerId)}
-                          onHit={() => this.onHit()}
-                          onStay={() => this.onStay()}
-                          onChangeBet={(player, bet) =>
-                            this.onChangeBet(player, bet)
-                          }
-                          onSplit={() => this.onSplit()}
-                          onDoubleDown={() => this.onDoubleDown()}
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-                <tr>
-                  <td
-                    colSpan={this.props.state.currentGame.players.length}
-                    align="center"
-                  >
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>{this.getNextTurnButton()}</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <HandComponent
-                              hand={this.props.state.dealersHand}
-                              isActive={
-                                this.props.state.turnIsGoing &&
-                                this.getActiveHand() ===
-                                  this.props.state.dealersHand
-                              }
-                              isLoggedInUser={false}
-                              onHit={() => this.onHit()}
-                              onStay={() => this.onStay()}
-                              onSplit={() => this.onSplit()}
-                              onDoubleDown={() => this.onDoubleDown()}
-                              isDealer={true}
-                              key="dealer"
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="game">
+            <div className="playersContainer">
+              {this.props.state.currentGame.players.map((playerId, index) => {
+                return (
+                    <PlayerComponent
+                      player={this.getPlayer(playerId)}
+                      hands={this.getHandsForPlayer(playerId)}
+                      activeHand={this.getActiveHand()}
+                      canChangeBet={!this.props.state.turnIsGoing}
+                      isLoggedInPlayer={this.isLoggedInPlayer(playerId)}
+                      onHit={() => this.onHit()}
+                      onStay={() => this.onStay()}
+                      onChangeBet={(player, bet) =>
+                        this.onChangeBet(player, bet)
+                      }
+                      onSplit={() => this.onSplit()}
+                      onDoubleDown={() => this.onDoubleDown()}
+                      key={"player" +index}
+                    />
+                  )
+                })}
+              </div>
+              {this.getNextTurnButton()}
+              <div className="dealerContainer">
+                <HandComponent
+                  hand={this.props.state.dealersHand}
+                  isActive={
+                    this.props.state.turnIsGoing &&
+                    this.getActiveHand() ===
+                      this.props.state.dealersHand
+                  }
+                  isLoggedInUser={false}
+                  onHit={() => this.onHit()}
+                  onStay={() => this.onStay()}
+                  onSplit={() => this.onSplit()}
+                  onDoubleDown={() => this.onDoubleDown()}
+                  isDealer={true}
+                  key="dealer"
+                />
+              </div>
           </div>
-        </div>
+          </div>
       </AuthContext.Provider>
     );
   }

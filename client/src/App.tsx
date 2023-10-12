@@ -26,21 +26,21 @@ interface AppProps {
 export interface AppState extends State {
   readonly currentUser: Player | null;
   readonly currentAuth0Profile: Auth0Profile | null;
-  readonly auth: Auth;
   readonly tokenRenewalComplete: boolean;
 }
 
 class App extends Component<AppProps, AppState> {
   webSocketClient: W3CWebSocket;
+  auth: Auth;
 
   constructor(props: AppProps) {
     super(props);
+    this.auth = new Auth(this.props.history, this.loadUserProfile);
     this.state = {
       ...defaultState,
       currentUser: null,
       currentAuth0Profile: null,
       tokenRenewalComplete: false,
-      auth: new Auth(this.props.history, this.loadUserProfile),
     } as AppState;
     this.webSocketClient = new W3CWebSocket('ws://' + host + ':' + 10116);
   }
@@ -57,8 +57,7 @@ class App extends Component<AppProps, AppState> {
       console.log('WebSocket message received: ' + jsonString);
       this.setServerState(JSON.parse(jsonString));
     };
-    const { auth } = this.state;
-    auth.renewToken(() => this.loadUserProfile());
+    this.auth.renewToken(() => this.loadUserProfile());
   }
 
   setServerState = (state: State) => {
@@ -68,7 +67,7 @@ class App extends Component<AppProps, AppState> {
 
   loadUserProfile = () => {
     this.setState({ ...this.setState, tokenRenewalComplete: true });
-    this.state.auth.getProfile((profile: Auth0Profile, _error: string) => {
+    this.auth.getProfile((profile: Auth0Profile, _error: string) => {
       this.setState({
         ...this.state,
         currentAuth0Profile: profile,
@@ -104,7 +103,7 @@ class App extends Component<AppProps, AppState> {
   render() {
     return (
       <AppContainer 
-        auth={this.state.auth} 
+        auth={this.auth} 
         tokenRenewalComplete={this.state.tokenRenewalComplete} 
         state={this.state} 
         location={this.props.location}        

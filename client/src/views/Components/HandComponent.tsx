@@ -89,21 +89,25 @@ export const HandComponent = (props: HandProperties) => {
   var btnActive = buttonsShouldBeVisible(props) ? 'Active' : '';
   return (
       <div className={'hand' + active}>
-        <div className={'handTotal' + active}>{getHandTotal(hand)}</div>
-        {getBet(hand)}
-        {hand.cards.map((card, index) => {
-          return <CardComponent card={card} key={"card" + index}/>;
-        })}
-        <div className="handButtons">
+        <div className="handTotalBet">
+          <div className={'handTotal' + active}>{getHandTotal(hand)}</div>
+          {getBet(hand)}
+        </div>
+        <div className="cardsContainer">
+          {hand.cards.map((card, index) => {
+            return <CardComponent card={card} key={"card" + index}/>;
+          })}
+        </div>
+        {!props.isDealer && (<div className="handButtons">
           <button
-            className={'handButton' + btnActive}
+            className='handButton'
             disabled={!canHit(hand)}
             onClick={() => props.onHit()}
           >
             Hit
           </button>
           <button
-            className={'handButton' + btnActive}
+            className={'handButton'}
             disabled={!canStay(hand)}
             onClick={() => props.onStay()}
           >
@@ -112,7 +116,8 @@ export const HandComponent = (props: HandProperties) => {
           {getSplitButton(props)}
           {getDoubleDownButton(props)}
         </div>
-        {getHandResult(hand)}
+       )}
+       {getHandResult(hand)}
       </div>
     );
 };

@@ -128,14 +128,18 @@ export class HandService {
     var cards = state.dealersHand.cards.filter((card) => card !== UnknownCard);
     cards.push(this.cardService.nextCard());
     var dealersHand = { ...state.dealersHand, cards };
-    return { ...state, dealersHand };
+    var newState = { ...state, dealersHand };
+    if (helper.isBlackjack(dealersHand)) {
+      newState = this.endTurn(newState);
+    }
+    return newState;
   }
 
   dealerTakesCard(state: State): State {
     var { dealersHand } = state;
     if (helper.highestTotal(dealersHand) < 17) {
       dealersHand = this.addCard(dealersHand, this.cardService.nextCard());
-    }
+    } 
     return { ...state, dealersHand };
   }
 
@@ -163,6 +167,7 @@ export class HandService {
   }
 
   endTurn(state: State): State {
+    console.log('End turn');
     var playersHands = [];
     for (let hand of state.playersHands) {
       hand = this.setResult(hand, this.handResult(hand, state.dealersHand));
