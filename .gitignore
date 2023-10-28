@@ -1,1 +1,7 @@
 .idea
+bin
+tmp
+*~
+node_modules
+log
+rails/config/master.key
