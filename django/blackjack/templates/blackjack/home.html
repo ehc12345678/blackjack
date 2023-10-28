@@ -1,0 +1,114 @@
+
+{% load static %}
+{% load hand_helper %}
+<html>
+<head>
+    <link href="{% static 'css/App.css' %}" rel="stylesheet">
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <script>
+        function onHit(e) {
+            alert('Hit me');
+        }
+
+        function onStay(e) {
+            alert("Stay");
+        }
+
+        function onSplit(e) {
+            alert("Split");
+        }
+
+        function onDoubleDown(e) {
+            alert("Double Down");
+        }
+
+</script>
+</head>
+<body class="body">
+  <div>
+    <h2>Game</h2>
+    <div className="game">
+        <div className="playersContainer">
+            {% for player in players %}
+                <div class ="player">
+                    <div class="playerName">{{ player.name }}</div>
+                    <div class="playerChips">Chips: {{ player.chipBalance }}</div>
+                    <div class="playerCash">Cash: {{ player.cashBalance }}</div>
+                    <div class="hands">
+                        {% for hand in state.playersHands %}
+                            <div class="hand">
+                                <div class="handTotalBet">
+                                    <div class="handTotal">
+                                        {% if hand|isBlackjack %}
+                                          <span class="blackjack">Blackjack</span>;
+                                        {% elif hand|isBusted %}
+                                          <span class="busted">Busted</span>;
+                                        {% elif hand|lowest > 0 and hand.isStaying or hand|lowest == hand|highest %}
+                                          <b>{{hand|bestTotal}}</b>
+                                        {% elif hand|lowest > 0 %}
+                                          <b>{{hand|lowest}}</b> or <b>{{hand|highest}}</b>
+                                        {% endif %}                                      
+                                    </div>
+                                    <div class="handBet">Bet: {{ hand.bet }}</div>
+                                </div>
+                                <div class="cardsContainer">
+                                    {% for card in hand.cards %}
+                                    <img class="card" src="{% static 'cards'%}/{{card.card}}{{card.suit}}.jpg" alt="Card"/>
+                                    {% endfor %}
+                                </div>
+                                <div class"handButtons">
+                                    <button
+                                      className='handButton'
+                                      {% if not hand|canHit %} disabled="true" {% endif %}
+                                      onClick="onHit()"
+                                    >
+                                      Hit
+                                    </button>
+                                    <button
+                                      className='handButton'
+                                      {% if not hand|canStay %} disabled="true" {% endif %}
+                                      onClick="onStay()"
+                                    >
+                                      Stay
+                                    </button>
+                                    {% if hand|canSplit %}
+                                        <button onClick={onSplit()}>Split</button>
+                                    {% endif %}
+
+                                    {% if hand|canDoubleDown %}
+                                        <button onClick="onDoubleDown()">Double Down</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div className="dealerContainer">
+            <div class="hand">
+                <div class="handTotalBet">
+                    <div class="handTotal">
+                        {% if dealer|isBlackjack %}
+                          <span class="blackjack">Blackjack</span>;
+                        {% elif dealer|isBusted %}
+                          <span class="busted">Busted</span>;
+                        {% elif dealer|lowest > 0 and dealer.isStaying or dealer|lowest == dealer|highest %}
+                          <b>{{dealer|bestTotal}}</b>
+                        {% elif dealer|lowest > 0 %}
+                          <b>{{dealer|lowest}}</b> or <b>{{dealer|highest}}</b>
+                        {% endif %}                                      
+                    </div>
+                </div>
+                <div class="cardsContainer">
+                    {% for card in dealer.cards %}
+                    <img class="card" src="{% static 'cards'%}/{{card.card}}{{card.suit}}.jpg" alt="Card"/>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>    
+    </div>
+  </div>
+</body>
+</html>
+

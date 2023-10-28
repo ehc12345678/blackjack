@@ -1,0 +1,178 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.body {
+  margin: 15px;
+}
+
+h1,
+h2,
+h3 {
+  color: #f0582a;
+}
+
+button {
+  margin: 5px;
+}
+
+ul.unstyled {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom right, #f0582a, #eb0685);
+}
+
+nav li {
+  float: left;
+}
+
+nav li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #d9390d;
+}
+
+nav button {
+  margin-top: 13px;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+.playersContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.dealerContainer {
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+}
+
+.nextTurnContainer {
+  text-align: left;
+}
+
+.gameNextTurn {
+  text-align: center;
+}
+
+.player {
+  border-style: solid;
+  padding-top: 10px;
+  margin: 20px;
+  vertical-align: middle;
+}
+
+.playerName {
+  text-align: center;
+  font-size: medium;
+  background-color: aqua;
+  font-weight: bold;
+}
+
+.playerChips,
+.playerCash,
+.playerBetForm {
+  display: inline;
+  margin-left: 10px;
+}
+
+.playerBetForm input {
+  width: 3em;
+}
+
+.playerBet {
+  margin-left: 10px;
+}
+
+.hands {
+  border-style: dotted;
+  display: block;
+}
+
+.hand {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.handTotalBet {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cardsContainer {
+  display: flxe;
+  flex-direction: row;
+}
+
+.handTotal {
+  text-align: center;
+}
+
+.handTotalActive {
+  text-align: center;
+  background-color: blue;
+}
+
+.handButtons {
+  display: flex;
+  justify-content: center;
+}
+
+.handBet {
+  align-self: center;
+}
+
+.handResult {
+  text-align: center;
+}
+
+button.handButton {
+  margin-top: 10px;
+}
+
+.card {
+  display: inline-block;
+  vertical-align: bottom;
+  border-style: groove;
+}
+
+.blackjack {
+  font-weight: bold;
+  font-size: 12pt;
+  color: green;
+}
+
+.busted {
+  font-weight: bold;
+  font-size: 12pt;
+  color: red;
+}
+
+img {
+  width: 100px;
+  height: 200px;
+}

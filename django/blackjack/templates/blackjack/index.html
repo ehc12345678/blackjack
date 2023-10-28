@@ -1,0 +1,7 @@
+<ul>
+    {% for card in all_cards %}
+        <li>
+            <a href="{% url 'detail' card.suit card.value %}">{{ card }}</a>
+        </li>
+    {% endfor %}
+</ul>

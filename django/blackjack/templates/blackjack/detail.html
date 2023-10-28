@@ -1,0 +1,9 @@
+{% load static %}
+<head>
+    <link href="{% static 'css/App.css' %}" rel="stylesheet">
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+</head>
+<html>
+    <img class="card" src="{% static 'cards'%}/{{the_card.card.short_form}}{{the_card.suit.short_form}}.jpg" alt="Card"/>
+    {{ the_card }}
+</html>

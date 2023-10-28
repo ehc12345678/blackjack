@@ -5,3 +5,7 @@ tmp
 node_modules
 log
 rails/config/master.key
+django/db.sqlite3
+__pycache__
+.DS_Store
+.vscode
